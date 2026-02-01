@@ -11,10 +11,17 @@
 #include "midi.h"
 #include "kb_input.h"
 
+void usage() {
+    fprintf(stderr, "synth -kb : keyboard input, very limited for now but will probably evolve\n");
+    fprintf(stderr, "synth -midi <midi hardware id> : midi keyboard input, able to change parameters of the sounds (ADSR, cutoff, detune and oscillators waveforms)\n");
+    fprintf(stderr, "use amidi -l to list your connected midi devices and find your midi device hardware id, often something like : hw:0,0,0 or hw:1,0,0\n");
+    fprintf(stderr, "to see this helper again, use synth -h or synth -help\n");
+}
+
 int main(int argc, char **argv) {
 
     if (argc < 2) {
-        fprintf(stderr, "Not enought arguments.");
+        usage();
         return 1;
     }
 
@@ -32,13 +39,18 @@ int main(int argc, char **argv) {
     } else if (strcmp(argv[1], "-midi") == 0 && argc < 3) {
         fprintf(stderr, "Missing midi hardware device id.");
         return 1;
+    } else if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-help") == 0) {
+        usage();
+        return 0;
+    } else {
+        usage();
+        return 1;
     }
 
     int octave = DEFAULT_OCTAVE;
     note_t note = {.semitone = nC, .octave = octave, .duration = 5, .velocity = 0};
 
     if (kb_input) note.velocity = 127;
-
 
     lp_filter_t filter;
     lp_init(&filter, 500.0f);

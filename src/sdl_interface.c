@@ -4,7 +4,7 @@
 #include "synth.h"
 
 /**
- * SDL renderer for the interface 
+ * SDL renderer for thetext interface 
  * Renders informations about the synthesizer and the note
  */
 void render_interface(note_t note, synth_3osc_t synth, TTF_Font *font, SDL_Renderer *renderer) {

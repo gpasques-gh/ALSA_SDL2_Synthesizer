@@ -1,6 +1,11 @@
 #ifndef SYNTH_H
 #define SYNTH_H
 
+#define SINE_WAVE 0
+#define SQUARE_WAVE 1
+#define TRIANGLE_WAVE 2
+#define SAWTOOTH_WAVE 3
+
 typedef struct {
     short semitone;
     short octave;
