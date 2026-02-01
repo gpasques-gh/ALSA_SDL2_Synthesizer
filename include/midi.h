@@ -4,37 +4,15 @@
 #include <alsa/asoundlib.h>
 #include "synth.h"
 
-int get_midi(snd_rawmidi_t *midi_in, note_t *pnote) {
-    
-    if (midi_in) {
-        unsigned char buffer[1024];
-        ssize_t ret;
-        while(1) {
-            ret = snd_rawmidi_read(midi_in, buffer, sizeof(buffer));
-            if (ret == -EAGAIN) {
-                continue;
-            }
-            
-            if (ret < 0) {
-                break;
-            } else if (ret > 0) {
-                for (int i = 0; i + 2< ret; i+=3) {
-                    unsigned char status = buffer[i];
-                    unsigned char note = buffer[i + 1];
-                    unsigned char vel = buffer[i + 2];
+#define ARTURIA_ATT_KNOB 73
+#define ARTURIA_DEC_KNOB 75
+#define ARTURIA_REL_KNOB 79
+#define ARTURIA_SUS_KNOB 72
 
-                    if ((status & 0xF0) == 0x90 && vel > 0) {
-                        pnote->n_semitone = (note % 12) + 1;
-                        pnote->n_octave = (note / 12) - 1;
-                
-                        return 1;
-                    }
-                }
-            }
-        }
-    }
-    
-    return 0;
-}
+#define PRESSED 0xF0
+#define NOTE_PRESSED 0x90
+#define KNOB_TURNED 0xB0
+
+int get_midi(snd_rawmidi_t *midi_in, note_t *pnote, synth_3osc_t *synth);
 
 #endif

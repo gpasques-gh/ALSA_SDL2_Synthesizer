@@ -13,9 +13,6 @@
 
 int main(int argc, char **argv) {
 
-    
-    
-
     int octave = DEFAULT_OCTAVE;
     note_t note = {.n_semitone = nC, .n_octave = octave, .n_duration = 5};
     
@@ -28,7 +25,9 @@ int main(int argc, char **argv) {
     double sustain = 0.7;
     double release = 0.2;
 
-    if (argc >= 8) {
+    char midi_device[256];
+
+    if (argc >= 10) {
         attack = atof(argv[1]);
         decay = atof(argv[2]);
         sustain = atof(argv[3]);
@@ -36,6 +35,7 @@ int main(int argc, char **argv) {
         osc_a_wave = atol(argv[5]);
         osc_b_wave = atol(argv[6]);
         osc_c_wave = atol(argv[7]);
+        strcpy(midi_device, argv[8]);
     }
 
     adsr_t adsr = {
@@ -121,18 +121,18 @@ int main(int argc, char **argv) {
         perror("SDL renderer creation error.");
         return 1;
     }
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    int running = 1;
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     TTF_Init();
     TTF_Font* sans = TTF_OpenFont("FreeSans.ttf", 24);
 
-
     snd_rawmidi_t *midi_in;
-    snd_rawmidi_open(&midi_in, NULL, "hw:0,0,0", SND_RAWMIDI_NONBLOCK);
+    snd_rawmidi_open(&midi_in, NULL, midi_device, SND_RAWMIDI_NONBLOCK);
 
     SDL_Event event;
+
+    int running = 1;
 
     while (running) {
 
@@ -142,47 +142,8 @@ int main(int argc, char **argv) {
             } 
         }
 
-        unsigned char midi_buffer[1024];
-        ssize_t ret = snd_rawmidi_read(midi_in, midi_buffer, sizeof(midi_buffer));
-        if (ret > 0) {
-            for (int i = 0; i + 2 < ret; i += 3) {
-                unsigned char status = midi_buffer[i];
-                unsigned char data1 = midi_buffer[i+1];
-                unsigned char data2 = midi_buffer[i+2];
-
-                if ((status & 0xF0) == 0x90 && data2 > 0) {
-                    note.n_semitone = (data1 % 12);
-                    note.n_octave = (data1 / 12) - 1;
-                    note_to_sound(note, &sound);
-                    note_to_sound(note, &sound_b);
-                    sound_b.s_freq += 1;
-                    note_to_sound(note, &sound_c);
-                    sound_c.s_freq -= 1;
-                }
-
-                if ((status & 0xF0) == 0xB0) {
-                    printf("Knob CC: %d Value: %d\n", data1, data2);
-                    switch(data1) {
-                        case 73:
-                            adsr.att = (data2 / 127.0);
-                            break;
-                        case 75:
-                            adsr.dec = (data2 / 127.0);
-                            break;
-                        case 79:
-                            adsr.sus = (data2 / 127.0);
-                            break;
-                        case 72:
-                            adsr.rel = (data2 / 127.0);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
+        int midi_err = get_midi(midi_in, &note, &synth_3osc);
     
-
         render_synth3osc(synth_3osc, buffer);
         int err = snd_pcm_writei(handle, buffer, FRAMES);
         if (err == -EPIPE) {
