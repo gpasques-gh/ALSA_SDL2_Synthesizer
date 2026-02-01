@@ -187,7 +187,7 @@ void render_synth3osc(synth_3osc_t *synth, short *mix_buffer) {
         mixed /= 3;
         if (mixed > 32767) mixed = 32767;
         if (mixed < -32768) mixed = -32768;
-        mix_buffer[i] = (short)(mixed * envelope);
+        mix_buffer[i] = (short)(mixed * envelope * synth->velocity_amplitude);
         if (synth->frames_left > 0) synth->frames_left--;
         else synth->active = 0;
     }
@@ -205,6 +205,7 @@ void change_osc_freq(synth_3osc_t *synth, note_t note) {
     synth->frames_total = (note.duration * 1000) * RATE / 1000;
     synth->frames_left = synth->frames_total;
     synth->active = 1;
+    synth->velocity_amplitude = (note.velocity / 127.0);
 
     synth->osc_a->freq= A_4 * pow(2, a4_diff / 12);
     synth->osc_a->phase = 0.0;  

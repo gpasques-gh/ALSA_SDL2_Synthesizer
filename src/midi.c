@@ -25,6 +25,7 @@ int get_midi(snd_rawmidi_t *midi_in, note_t *note, synth_3osc_t *synth) {
         if ((status & PRESSED) == NOTE_PRESSED && data2 > 0) {
             note->semitone = (data1 % 12);
             note->octave = (data1 / 12) - 1;
+            note->velocity = data2;
             change_osc_freq(synth, *note);
             synth->osc_b->freq += 1;
             synth->osc_c->freq -= 1;

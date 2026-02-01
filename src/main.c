@@ -13,7 +13,7 @@
 int main(int argc, char **argv) {
 
     int octave = DEFAULT_OCTAVE;
-    note_t note = {.semitone = nC, .octave = octave, .duration = 5};
+    note_t note = {.semitone = nC, .octave = octave, .duration = 5, .velocity = 0};
     
     int osc_a_wave = 0;
     int osc_b_wave = 0;
@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
         .adsr = &adsr,
         .active = 0,
         .frames_left = 0.0,
-        .frames_total = 0.0
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0
     };
 
     snd_pcm_t *handle;

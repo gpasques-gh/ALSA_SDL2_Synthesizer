@@ -5,6 +5,7 @@ typedef struct {
     short semitone;
     short octave;
     short duration;
+    short velocity;
 } note_t;
 
 typedef struct {
@@ -31,6 +32,7 @@ typedef struct {
     int frames_left;
     int frames_total;
     int active;
+    double velocity_amplitude;
 } synth_3osc_t;
 
 // SOUND RELATED
