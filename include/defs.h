@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 
+
+
 // NOTES SEMITONES
 #define nC 1
 #define nC_SHARP 2
