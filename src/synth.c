@@ -40,6 +40,7 @@ double get_adsr_envelope(synth_3osc_t *synth) {
         double decay_progress = (double) decay_pos / decay_frames;
         amplitude = 1.0 - decay_progress * (1.0 - adsr->sus);
     }
+
     // Sustain
     else if (elapsed_frames < release_start) {
         amplitude = adsr->sus;
@@ -74,6 +75,7 @@ void render_sine(osc_t *osc, short *buffer) {
         else osc->active = 0;
     }
 }
+
 
 /**
  * Generate a square wave with the given sound structure into the sound buffer

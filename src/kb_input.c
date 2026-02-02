@@ -92,6 +92,10 @@ void handle_input(SDL_Event *event, note_t *note, synth_3osc_t *synth) {
             synth->adsr->rel += 0.05;
             if (synth->adsr->rel > 1.05) synth->adsr->rel = 0.0;
             break;
+        case DETUNE_INCREMENT:
+            synth->detune += 0.05;
+            if (synth->detune > 1.05) synth->detune = 0.0;
+            break;
         default:
             break;
         }

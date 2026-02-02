@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
         .adsr = &adsr,
         .lp_filter = &filter,
         .active = 0,
-        .detune = 0.0,
+        .detune = 0.2,
         .frames_left = 0.0,
         .frames_total = 0.0,
         .velocity_amplitude = 0.0
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 
     snd_pcm_t *handle;
 
-    if (snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK) < 0) {
+    if (snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0) < 0) {
         perror("snd_pcm_open");
         return 1;
     }
