@@ -25,10 +25,6 @@
 #define ARTURIA_CUTOFF_KNOB 74
 #define ARTURIA_DETUNE_KNOB 71
 
-/**
- * Function that read midi input from the snd_rawmidi_t input
- * Into a note_t struct that is then used to actualize the frequency of the synth_3osc_t oscillators
- */
 int get_midi(snd_rawmidi_t *midi_in, note_t *note, synth_3osc_t *synth);
 
 #endif
