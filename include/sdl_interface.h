@@ -7,7 +7,7 @@
 #include "synth.h"
 #include "defs.h"
 
-#define WIDTH 600
+#define WIDTH 1200
 #define HEIGHT 600
 
 void render_interface(note_t note, synth_3osc_t synth, TTF_Font *font, SDL_Renderer *renderer);

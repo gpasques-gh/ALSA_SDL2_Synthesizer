@@ -16,7 +16,7 @@ void render_interface(note_t note, synth_3osc_t synth, TTF_Font *font, SDL_Rende
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_Rect surface_rect = {
         .h = 50,
-        .w = 600,
+        .w = WIDTH,
         .x = 0,
         .y = 0
     };
@@ -32,7 +32,7 @@ void render_interface(note_t note, synth_3osc_t synth, TTF_Font *font, SDL_Rende
     SDL_Texture *texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
     SDL_Rect surface_rect2 = {
         .h = 50,
-        .w = 600,
+        .w = WIDTH,
         .x = 0,
         .y = 60
     };
@@ -48,7 +48,7 @@ void render_interface(note_t note, synth_3osc_t synth, TTF_Font *font, SDL_Rende
     SDL_Texture *texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
     SDL_Rect surface_rect3 = {
         .h = 50,
-        .w = 600,
+        .w = WIDTH,
         .x = 0,
         .y = 120
     };

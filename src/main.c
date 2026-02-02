@@ -73,41 +73,107 @@ int main(int argc, char **argv) {
 
     adsr_t adsr = {.att = 0.0, .dec = 0.0, .sus = 0.0, .rel = 0.0};
 
-    osc_t osc_a = {
-        .active = 0,
-        .phase = 0.0,
-        .frames_left = 0,
-        .frames_total = 0,
-        .wave = 0
-    };
+    osc_t voice_a_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_a_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_a_osc_c = {.phase = 0.0, .wave = 0};
 
-    osc_t osc_b = {
-        .active = 0,
-        .phase = 0.0,
-        .frames_left = 0,
-        .frames_total = 0,
-        .wave = 0
-    };
+    osc_t voice_b_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_b_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_b_osc_c = {.phase = 0.0, .wave = 0};
 
-    osc_t osc_c = {
-        .active = 0,
-        .phase = 0.0,
-        .frames_left = 0,
-        .frames_total = 0,
-        .wave = 0
-    };
+    osc_t voice_c_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_c_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_c_osc_c = {.phase = 0.0, .wave = 0};
 
-    synth_3osc_t synth_3osc =  {
-        .osc_a = &osc_a,
-        .osc_b = &osc_b,
-        .osc_c = &osc_c,
+    osc_t voice_d_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_d_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_d_osc_c = {.phase = 0.0, .wave = 0};
+
+    osc_t voice_e_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_e_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_e_osc_c = {.phase = 0.0, .wave = 0};
+
+    osc_t voice_f_osc_a = {.phase = 0.0, .wave = 0};
+    osc_t voice_f_osc_b = {.phase = 0.0, .wave = 0};
+    osc_t voice_f_osc_c = {.phase = 0.0, .wave = 0};
+
+
+    synth_3osc_t voice_a =  {
+        .osc_a = &voice_a_osc_a,
+        .osc_b = &voice_a_osc_b,
+        .osc_c = &voice_a_osc_c,
         .adsr = &adsr,
-        .lp_filter = &filter,
         .active = 0,
-        .detune = 0.2,
         .frames_left = 0.0,
         .frames_total = 0.0,
-        .velocity_amplitude = 0.0
+        .velocity_amplitude = 0.0,
+    };
+
+    synth_3osc_t voice_b =  {
+        .osc_a = &voice_b_osc_a,
+        .osc_b = &voice_b_osc_b,
+        .osc_c = &voice_b_osc_c,
+        .adsr = &adsr,
+        .active = 0,
+        .frames_left = 0.0,
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0,
+    };
+
+    synth_3osc_t voice_c =  {
+        .osc_a = &voice_c_osc_a,
+        .osc_b = &voice_c_osc_b,
+        .osc_c = &voice_c_osc_c,
+        .adsr = &adsr,
+        .active = 0,
+        .frames_left = 0.0,
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0,
+    };
+
+    synth_3osc_t voice_d =  {
+        .osc_a = &voice_d_osc_a,
+        .osc_b = &voice_d_osc_b,
+        .osc_c = &voice_d_osc_c,
+        .adsr = &adsr,
+        .active = 0,
+        .frames_left = 0.0,
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0,
+    };
+
+    synth_3osc_t voice_e =  {
+        .osc_a = &voice_e_osc_a,
+        .osc_b = &voice_e_osc_b,
+        .osc_c = &voice_e_osc_c,
+        .adsr = &adsr,
+        .active = 0,
+        .frames_left = 0.0,
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0,
+    };
+
+    synth_3osc_t voice_f =  {
+        .osc_a = &voice_f_osc_a,
+        .osc_b = &voice_f_osc_b,
+        .osc_c = &voice_f_osc_c,
+        .adsr = &adsr,
+        .active = 0,
+        .frames_left = 0.0,
+        .frames_total = 0.0,
+        .velocity_amplitude = 0.0,
+    };
+
+    poly_synth_t synth = {
+        .voice_a = &voice_a,
+        .voice_b = &voice_b,
+        .voice_c = &voice_c,
+        .voice_d = &voice_d,
+        .voice_e = &voice_e,
+        .voice_f = &voice_f,
+        .amplitude = DEFAULT_AMPLITUDE,
+        .lp_filter = &filter,
+        .detune = 0.0
     };
 
     snd_pcm_t *handle;
@@ -152,7 +218,7 @@ int main(int argc, char **argv) {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     TTF_Init();
-    TTF_Font* sans = TTF_OpenFont("FreeSans.ttf", 24);
+    TTF_Font* sans = TTF_OpenFont("Regular.ttf", 24);
 
     if (midi_input) {
         snd_rawmidi_open(&midi_in, NULL, midi_device, SND_RAWMIDI_NONBLOCK);
@@ -166,21 +232,24 @@ int main(int argc, char **argv) {
 
     int running = 1;
 
+    int n_voices = 0;
+
     while (running) {
 
         while(SDL_PollEvent(&event) != 0) {
             if(event.type == SDL_QUIT) {
                 running = 0;
             }
-            if (kb_input && event.type == SDL_KEYDOWN) {
+            /*if (kb_input && event.type == SDL_KEYDOWN) {
                 handle_input(&event, &note, &synth_3osc, kb_layout);
-            }
+            }*/
         }
 
         if (midi_input)
-            get_midi(midi_in, &note, &synth_3osc);
+            get_midi(midi_in, &note, &synth, &n_voices);
 
-        render_synth3osc(&synth_3osc, buffer);
+        render_poly_synth(&synth, buffer, n_voices);
+        //fprintf(stderr, "Voices : %d", n_voices);
         int err = snd_pcm_writei(handle, buffer, FRAMES);
         if (err == -EPIPE) {
             snd_pcm_prepare(handle);
@@ -190,7 +259,7 @@ int main(int argc, char **argv) {
 
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        render_interface(note, synth_3osc, sans, renderer);
+        render_interface(note, voice_a, sans, renderer);
         render_waveform(renderer, buffer);
         SDL_RenderPresent(renderer);
     }

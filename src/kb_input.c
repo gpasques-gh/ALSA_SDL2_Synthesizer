@@ -7,7 +7,7 @@
 /**
  * Function that read keyboard input from the SDL_Event sent by the user
  * Into a note_t struct that is then used to actualize the frequency of the synth_3osc_t oscillators
- */
+ *
 void handle_input(SDL_Event *event, note_t *note, synth_3osc_t *synth, int kb_layout) {
 
     SDL_Keycode key = event->key.keysym.sym;
@@ -128,4 +128,5 @@ void handle_input(SDL_Event *event, note_t *note, synth_3osc_t *synth, int kb_la
             break;
         }
 
-}
+}*/
+
