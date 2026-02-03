@@ -1,6 +1,7 @@
 # ALSA & SDL C Synthesizer 🎹
 Small project for a C synthesizer written with ALSA C Library and SDL2.  
 Only runs on Linux, tested on a Debian machine, works on WSL but only using keyboard input, not MIDI input.  
+Not tested, but MIDI can maybe work in a Linux VM using USB passthrough, although there may be latency induced by the VM.
 
 # Features
 - 3 oscillator synthesizer
