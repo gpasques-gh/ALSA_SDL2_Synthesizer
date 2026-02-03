@@ -5,7 +5,8 @@
 #include <SDL2/SDL_ttf.h>
 #include "synth.h"
 
-void render_infos(synth_t synth, TTF_Font *font, SDL_Renderer *renderer);
+void render_infos(synth_t synth, TTF_Font *font, SDL_Renderer *renderer, 
+    double attack, double decay, double sustain, double release);
 void render_waveform(SDL_Renderer *renderer, short *buffer);
 
 #endif

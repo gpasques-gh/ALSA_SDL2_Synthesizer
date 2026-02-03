@@ -34,7 +34,6 @@ int main(int argc, char **argv)
     snd_rawmidi_t *midi_in = NULL;
 
     char midi_device[256];
-    
     int midi_input = 0;
     int keyboard_input = 0;
     int keyboard_layout = QWERTY;
@@ -233,7 +232,8 @@ int main(int argc, char **argv)
         
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        render_infos(synth, font, renderer);
+        render_infos(synth, font, renderer, 
+            attack, decay, sustain, release);
         render_waveform(renderer, buffer);
         SDL_RenderPresent(renderer);
     }
