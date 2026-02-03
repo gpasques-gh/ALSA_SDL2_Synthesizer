@@ -1,4 +1,4 @@
-# ALSA & SDL C Synthesizer
+# ALSA & SDL C Synthesizer 🎹
 Small project for a C synthesizer written with ALSA C Library and SDL2.  
 Only runs on Linux, tested on a Debian machine, works on WSL but only using keyboard input, not MIDI input.  
 
