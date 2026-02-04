@@ -13,9 +13,10 @@ OBJ_DIR = obj
 # Files
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+DEPS = $(OBJS:.o=.d)
 
 # Flags
-CFLAGS = -Wall -Wextra -O2 -I$(INC_DIR) $(shell pkg-config --cflags sdl2 SDL2_ttf)
+CFLAGS = -Wall -Wextra -O2 -I$(INC_DIR) -MMD -MP $(shell pkg-config --cflags sdl2 SDL2_ttf)
 LDFLAGS = -lasound -lncurses -lm $(shell pkg-config --libs sdl2 SDL2_ttf)
 
 # Default rule
@@ -26,7 +27,7 @@ $(BIN_DIR)/$(TARGET): $(OBJS) | $(BIN_DIR)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
 # Compile
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Create directories if needed
@@ -46,4 +47,5 @@ re: clean all
 run:
 	./$(BIN_DIR)/$(TARGET)
 
+-include $(DEPS)
 .PHONY: all clean re

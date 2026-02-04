@@ -10,6 +10,9 @@
 #include "keyboard.h"
 #include "interface.h"
 
+/**
+ * Prints the usage of the CLI arguments into the error output
+ */
 void usage()
 {
     fprintf(stderr, "synth -kb : keyboard input, defaults to QWERTY\n");
@@ -191,13 +194,13 @@ int main(int argc, char **argv)
     if (white_keys_texture == NULL)
     {
         fprintf(stderr, "error while creating keyboard texture: %s\n", SDL_GetError());
-        goto cleanup_renderer;
+        goto cleanup_renderer; 
     }
     SDL_SetTextureBlendMode(white_keys_texture, SDL_BLENDMODE_BLEND);
     SDL_SetRenderTarget(renderer, white_keys_texture);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    render_keyboard_base(renderer);
+    render_white_keys(renderer);
     SDL_SetRenderTarget(renderer, NULL);
 
     SDL_Texture *black_keys_texture = SDL_CreateTexture(renderer,
@@ -245,10 +248,10 @@ int main(int argc, char **argv)
             else if (keyboard_input &&
                      event.type == SDL_KEYDOWN &&
                      event.key.repeat == 0)
-                handle_input(event.key.keysym.sym, &synth, renderer, keyboard_layout,
+                handle_input(event.key.keysym.sym, &synth, keyboard_layout,
                              &octave, &attack, &decay, &sustain, &release);
             else if (keyboard_input && event.type == SDL_KEYUP)
-                handle_release(event.key.keysym.sym, &synth, renderer, keyboard_layout, octave);
+                handle_release(event.key.keysym.sym, &synth, keyboard_layout, octave);
         }
 
         if (midi_input)

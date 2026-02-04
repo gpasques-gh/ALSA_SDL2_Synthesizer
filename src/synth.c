@@ -3,6 +3,10 @@
 #include "defs.h"
 #include "synth.h"
 
+/**
+ * Process a sample from the ADSR envelope
+ * Returns the envelope amplification coeficient 
+ */
 double adsr_process(adsr_t *adsr)
 {
     switch (adsr->state)
@@ -68,6 +72,9 @@ double adsr_process(adsr_t *adsr)
     return adsr->output;
 }
 
+/**
+ * Renders the synth_t voices into the temporary sound buffer
+ */
 void render_synth(synth_t *synth, short *buffer)
 {
     double temp_buffer[FRAMES];
@@ -151,6 +158,10 @@ void render_synth(synth_t *synth, short *buffer)
     }
 }
 
+/**
+ * Change the frequency of a voice_t oscillators with the given MIDI note and velocity 
+ * Multiplied by the synth_t detune coefficient
+ */
 void change_freq(voice_t *voice, int note, int velocity, double detune)
 {
     int a4_diff = note - A4_POSITION;
@@ -169,6 +180,9 @@ void change_freq(voice_t *voice, int note, int velocity, double detune)
     voice->oscillators[2].phase = 0.0;
 }
 
+/**
+ * Get the literal name of a given waveform
+ */
 const char *get_wave_name(int wave)
 {
     switch (wave)
@@ -186,6 +200,9 @@ const char *get_wave_name(int wave)
     }
 }
 
+/**
+ * Initialize a low-pass filter with the given cutoff frequency
+ */
 void lp_init(lp_filter_t *filter, float cutoff)
 {
     float rc = 1.0f / (2.0f * M_PI * cutoff);
@@ -195,6 +212,10 @@ void lp_init(lp_filter_t *filter, float cutoff)
     filter->cutoff = cutoff;
 }
 
+/**
+ * Process a sample with the low-pass filter
+ * Returns the processed sample
+ */
 short lp_process(lp_filter_t *filter, short input)
 {
     float x = (float)input;
@@ -202,6 +223,10 @@ short lp_process(lp_filter_t *filter, short input)
     return (short)filter->prev;
 }
 
+/**
+ * Returns the first free voice from the synth_t
+ * Used to assign a note send by MIDI or keyboard to the first free voice 
+ */
 voice_t *get_free_voice(synth_t *synth)
 {
     for (int i = 0; i < VOICES; i++)
