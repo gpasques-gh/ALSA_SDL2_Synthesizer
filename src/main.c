@@ -196,8 +196,8 @@ int main(int argc, char **argv)
     }
 
     SDL_SetRenderTarget(renderer, keyboard_texture);
-SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // WHITE background
-SDL_RenderClear(renderer);                       // ADD THIS
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);                       
     render_keyboard_base(renderer);
     SDL_SetRenderTarget(renderer, NULL);
 
@@ -271,6 +271,8 @@ SDL_RenderClear(renderer);                       // ADD THIS
 
     if (midi_in)
         snd_rawmidi_close(midi_in);
+
+    cleanup_text_cache();
 
 cleanup_font:
     if (font)

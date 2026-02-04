@@ -5,59 +5,68 @@
 #include "synth.h"
 
 
+static text_cache_t text_cache = {NULL, NULL, "", ""};
+
 void render_infos(synth_t synth, 
     TTF_Font *font, SDL_Renderer *renderer,
     double attack, double decay, double sustain, double release)
 {
     SDL_Color black = {0, 0, 0, 255};
-    char buffer[256];
-    snprintf(buffer, sizeof(buffer), "Voice A : %d | Voice B : %d | Voice C : %d | Voice D : %d | Voice E : %d | Voice F : %d", 
-    synth.voices[0].note, synth.voices[1].note,synth.voices[2].note, synth.voices[3].note, synth.voices[4].note, synth.voices[5].note);
-    SDL_Surface *surface = TTF_RenderText_Solid(font, buffer, black);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_Rect surface_rect = {
-        .h = 50,
-        .w = WIDTH,
-        .x = 0,
-        .y = 0
-    }; 
-    SDL_RenderCopy(renderer, texture, NULL, &surface_rect);
-    SDL_FreeSurface(surface);
-    SDL_DestroyTexture(texture);
+    
 
-    char buffer2[256];
-
-    snprintf(buffer2, sizeof(buffer2), "Envelope - Attack: %.2f | Decay: %.2f | Sustain: %.2f | Release: %.2f", 
+    char envelope_buffer[256];
+    snprintf(envelope_buffer, sizeof(envelope_buffer), 
+        "Envelope - Attack: %.2f | Decay: %.2f | Sustain: %.2f | Release: %.2f", 
         attack, decay, sustain, release);
-    SDL_Surface *surface2 = TTF_RenderText_Solid(font, buffer2, black);
-    SDL_Texture *texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
-    SDL_Rect surface_rect2 = {
-        .h = 50,
-        .w = WIDTH,
-        .x = 0,
-        .y = 60
-    };
-    SDL_RenderCopy(renderer, texture2, NULL, &surface_rect2);
-    SDL_FreeSurface(surface2);
-    SDL_DestroyTexture(texture2);
 
-    char buffer3[256];
-
-    snprintf(buffer3, sizeof(buffer3), "Waveforms - Osc A: %s | Osc B: %s | Osc C: %s", 
-        get_wave_name(synth.voices[0].oscillators[0].wave), get_wave_name(synth.voices[0].oscillators[1].wave), get_wave_name(synth.voices[0].oscillators[2].wave));
-    SDL_Surface *surface3 = TTF_RenderText_Solid(font, buffer3, black);
-    SDL_Texture *texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
-    SDL_Rect surface_rect3 = {
-        .h = 50,
-        .w = WIDTH,
-        .x = 0,
-        .y = 120
-    };
-    SDL_RenderCopy(renderer, texture3, NULL, &surface_rect3);
-    SDL_FreeSurface(surface3);
-    SDL_DestroyTexture(texture3);
+    if (strcmp(envelope_buffer, text_cache.last_envelope_text) != 0)
+    {
+        if (text_cache.envelope_texture)
+            SDL_DestroyTexture(text_cache.envelope_texture);
+        
+        SDL_Surface *surface = TTF_RenderText_Solid(font, envelope_buffer, black);
+        text_cache.envelope_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+        
+        strcpy(text_cache.last_envelope_text, envelope_buffer);
+    }
+    
+    SDL_Rect envelope_rect = {.h = 50, .w = WIDTH, .x = 0, .y = 60};
+    SDL_RenderCopy(renderer, text_cache.envelope_texture, NULL, &envelope_rect);
+    
+    char waveform_buffer[256];
+    snprintf(waveform_buffer, sizeof(waveform_buffer), 
+        "Waveforms - Osc A: %s | Osc B: %s | Osc C: %s", 
+        get_wave_name(synth.voices[0].oscillators[0].wave), 
+        get_wave_name(synth.voices[0].oscillators[1].wave), 
+        get_wave_name(synth.voices[0].oscillators[2].wave));
+    
+    if (strcmp(waveform_buffer, text_cache.last_waveform_text) != 0)
+    {
+        if (text_cache.waveform_texture)
+            SDL_DestroyTexture(text_cache.waveform_texture);
+        
+        SDL_Surface *surface = TTF_RenderText_Solid(font, waveform_buffer, black);
+        text_cache.waveform_texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+        
+        strcpy(text_cache.last_waveform_text, waveform_buffer);
+    }
+    
+    SDL_Rect waveform_rect = {.h = 50, .w = WIDTH, .x = 0, .y = 120};
+    SDL_RenderCopy(renderer, text_cache.waveform_texture, NULL, &waveform_rect);
 }
 
+void cleanup_text_cache()
+{
+    if (text_cache.envelope_texture)
+        SDL_DestroyTexture(text_cache.envelope_texture);
+    if (text_cache.waveform_texture)
+        SDL_DestroyTexture(text_cache.waveform_texture);
+    
+    text_cache.envelope_texture = NULL;
+    text_cache.waveform_texture = NULL;
+}
 void render_waveform(SDL_Renderer *renderer, short *buffer)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
