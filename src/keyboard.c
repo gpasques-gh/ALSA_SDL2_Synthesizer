@@ -31,6 +31,9 @@ void handle_input(SDL_Keycode key, synth_t *synth, int layout, int *octave,
         if (free_voice == NULL)
             return;
         change_freq(free_voice, midi_note, 127, synth->detune);
+        if (synth->filter->adsr->state == ENV_IDLE ||
+            synth->filter->adsr->state == ENV_RELEASE)
+                synth->filter->adsr->state = ENV_ATTACK;
         return;
     }
 

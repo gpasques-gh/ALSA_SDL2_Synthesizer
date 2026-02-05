@@ -81,6 +81,7 @@ void render_synth(synth_t *synth, short *buffer)
     memset(temp_buffer, 0, FRAMES * sizeof(double));
 
     int active_voices = 0;
+    int released_voices = 0;
 
     for (int v = 0; v < VOICES; v++)
     {
@@ -88,9 +89,14 @@ void render_synth(synth_t *synth, short *buffer)
         if (!voice->active)
             continue;
         active_voices++;
+
+        if (synth->voices[v].adsr->state == ENV_RELEASE)
+            released_voices++;
+
         for (int i = 0; i < FRAMES; i++)
         {
             double envelope = adsr_process(voice->adsr);
+            //fprintf(stderr, "%.2f\n", envelope);
             double mixed = 0.0;
 
             for (int o = 0; o < 3; o++)
@@ -144,15 +150,22 @@ void render_synth(synth_t *synth, short *buffer)
                       ? 1.0 / sqrt((double)active_voices)
                       : 0.0;
 
+    if (active_voices == 0 || active_voices == released_voices)
+        synth->filter->adsr->state = ENV_RELEASE;
+
     for (int i = 0; i < FRAMES; i++)
     {
+        double env_cutoff = synth->filter->cutoff + (synth->filter->cutoff * adsr_process(synth->filter->adsr));
+        if (env_cutoff > 1.0) env_cutoff = 1.0;
+    
         double sample = temp_buffer[i] * gain;
         if (sample > 1.0)
             sample = 1.0;
         if (sample < -1.0)
             sample = -1.0;
 
-        sample = lp_process(synth->filter, sample, synth->filter->cutoff);
+        sample = lp_process(synth->filter, sample, env_cutoff);
+        synth->filter->env_cutoff = env_cutoff;
         buffer[i] = (short)(sample * 32767.0);;
     }
 }
