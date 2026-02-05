@@ -3,9 +3,7 @@
 
 #include "defs.h"
 
-/**
- * ADSR envelope states
- */
+/** ADSR envelope states */
 typedef enum
 {
     ENV_IDLE,
@@ -38,9 +36,7 @@ typedef struct
     short wave;
 } osc_t;
 
-/**
- * Low-pass filter structure
- */
+/** Low-pass filter structure */
 typedef struct
 {
     float prev_input, prev_output, cutoff;
@@ -80,9 +76,7 @@ typedef struct
  */
 double adsr_process(adsr_t *adsr);
 
-/**
- * Renders the synth_t voices into the temporary sound buffer
- */
+/** Renders the synth_t voices into the temporary sound buffer */
 void render_synth(synth_t *synth, short *buffer);
 
 /**
@@ -91,14 +85,10 @@ void render_synth(synth_t *synth, short *buffer);
  */
 void change_freq(voice_t *voice, int note, int velocity, double detune);
 
-/**
- * Apply the detune change to the voices oscillators
- */
+/** Apply the detune change to the voices oscillators */
 void apply_detune_change(synth_t *synth);
 
-/**
- * Get the literal name of a given waveform
- */
+/** Get the literal name of a given waveform */
 const char *get_wave_name(int wave);
 
 /**

@@ -105,9 +105,7 @@ void handle_input(SDL_Keycode key, synth_t *synth, int layout, int *octave,
     }
 }
 
-/**
- * Free the synth voices when their assigned note key are being released
- */
+/** Free the synth voices when their assigned note key are being released */
 void handle_release(SDL_Keycode key, synth_t *synth, int layout, int octave)
 {
     int midi_note = key_to_note(key, layout, octave);
