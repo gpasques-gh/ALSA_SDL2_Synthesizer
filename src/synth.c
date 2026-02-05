@@ -3,7 +3,7 @@
 #include "defs.h"
 #include "synth.h"
 
-/**
+/*
  * Process a sample from the ADSR envelope
  * Returns the envelope amplification coeficient
  */
@@ -74,7 +74,7 @@ double adsr_process(adsr_t *adsr)
     return adsr->output;
 }
 
-/** Renders the synth_t voices into the temporary sound buffer */
+/* Renders the synth_t voices into the temporary sound buffer */
 void render_synth(synth_t *synth, short *buffer)
 {
     double temp_buffer[FRAMES];
@@ -157,7 +157,7 @@ void render_synth(synth_t *synth, short *buffer)
     }
 }
 
-/**
+/*
  * Change the frequency of a voice_t oscillators with the given MIDI note and velocity
  * Multiplied by the synth_t detune coefficient
  */
@@ -179,7 +179,7 @@ void change_freq(voice_t *voice, int note, int velocity, double detune)
     voice->oscillators[2].phase = 0.0;
 }
 
-/** Apply the detune change to the voices oscillators */
+/* Apply the detune change to the voices oscillators */
 void apply_detune_change(synth_t *synth) 
 {
     for (int v = 0; v < VOICES; v++)
@@ -190,7 +190,7 @@ void apply_detune_change(synth_t *synth)
     }
 }
 
-/** Get the literal name of a given waveform */
+/* Get the literal name of a given waveform */
 const char *get_wave_name(int wave)
 {
     switch (wave)
@@ -208,7 +208,7 @@ const char *get_wave_name(int wave)
     }
 }
 
-/**
+/*
  * Process a sample with the low-pass filter
  * Returns the processed sample
  */
