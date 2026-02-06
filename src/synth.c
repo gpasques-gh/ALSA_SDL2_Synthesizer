@@ -16,7 +16,7 @@ double adsr_process(adsr_t *adsr)
         break;
     case ENV_ATTACK:
         if (*adsr->attack > 0.0)
-        {
+        {   /* Increment the amplification by the attack amount */
             double increment = 1.0 / (*adsr->attack * RATE);
             adsr->output += increment;
             if (adsr->output >= 1.0)
@@ -35,7 +35,7 @@ double adsr_process(adsr_t *adsr)
         if (*adsr->decay > 0.0)
         {
             if (*adsr->sustain > 0.0)
-            {
+            {   /* Decrement the amplification by the decay amount relatively to the sustain amount */
                 double decrement = (1.0 - *adsr->sustain) / (*adsr->decay * RATE);
                 adsr->output -= decrement;
         
@@ -46,7 +46,7 @@ double adsr_process(adsr_t *adsr)
                 }
             }
             else
-            {
+            {   /* Decrement the amplification by the decay amount relatively to the release amount */
                 double decrement = (1.0 - *adsr->release) / (*adsr->decay * RATE);
                 adsr->output -= decrement;
         
@@ -75,8 +75,7 @@ double adsr_process(adsr_t *adsr)
     case ENV_SUSTAIN:
         
         if (*adsr->sustain == 0.0)
-        {
-            fprintf(stderr, "test output: %.2f\n", adsr->output);
+        {   /* Increment the amplification by the attack amount */
             double decrement = adsr->output / (*adsr->release * RATE);
             adsr->output -= decrement;
             adsr->state = ENV_RELEASE;
@@ -86,7 +85,7 @@ double adsr_process(adsr_t *adsr)
         break;
     case ENV_RELEASE:
         if (*adsr->release > 0.0)
-        {
+        {   /* Decrement the amplification by the release amount */
             double decrement = adsr->output / (*adsr->release * RATE);
             adsr->output -= decrement;
             if (adsr->output <= 0.001)
@@ -112,7 +111,6 @@ void render_synth(synth_t *synth, short *buffer)
     memset(temp_buffer, 0, FRAMES * sizeof(double));
 
     int active_voices = 0;
-    int released_voices = 0;
 
     for (int v = 0; v < VOICES; v++)
     {
@@ -121,13 +119,9 @@ void render_synth(synth_t *synth, short *buffer)
             continue;
         active_voices++;
 
-        if (synth->voices[v].adsr->state == ENV_RELEASE)
-            released_voices++;
-
         for (int i = 0; i < FRAMES; i++)
-        {
+        { /* Oscillators processing for each voice*/
             double envelope = adsr_process(voice->adsr);
-            //fprintf(stderr, "%.2f\n", envelope);
             double mixed = 0.0;
 
             for (int o = 0; o < 3; o++)
@@ -161,6 +155,7 @@ void render_synth(synth_t *synth, short *buffer)
                     osc->phase -= 1.0;
             }
 
+            /* Oscillator sound mix */
             mixed /= 3.0;
             mixed *= envelope;
             mixed *= voice->velocity_amp;
@@ -177,12 +172,13 @@ void render_synth(synth_t *synth, short *buffer)
         }
     }
 
+    /* Gain to stay at the same level despite the number of active voices */
     double gain = (active_voices > 0)
                       ? 1.0 / sqrt((double)active_voices)
                       : 0.0;
 
     for (int i = 0; i < FRAMES; i++)
-    {
+    { /* Low-pass filter and gain processing */
         double env_cutoff = synth->filter->cutoff + adsr_process(synth->filter->adsr) / 2;
         if (env_cutoff > 1.0) env_cutoff = 1.0;
     
@@ -206,12 +202,14 @@ void change_freq(voice_t *voice, int note, int velocity, double detune)
 {
     int a4_diff = note - A4_POSITION;
 
+    /* Activating the voice */
     voice->note = note;
     voice->active = 1;
     voice->adsr->output = 0.001;
     voice->adsr->state = ENV_ATTACK;
     voice->velocity_amp = velocity / MIDI_MAX_VALUE;
 
+    /* Applying the frequency and detune effect to the oscillators */
     voice->oscillators[0].freq = A_4 * pow(2, a4_diff / 12.0);
     voice->oscillators[0].phase = 0.0;
     voice->oscillators[1].freq = A_4 * pow(2, a4_diff / 12.0) + (5 * detune);
@@ -224,7 +222,7 @@ void change_freq(voice_t *voice, int note, int velocity, double detune)
 void apply_detune_change(synth_t *synth) 
 {
     for (int v = 0; v < VOICES; v++)
-    {
+    { /* Applying detune changes to each voice of the synthesizer */
         int a4_diff = synth->voices[v].note - A4_POSITION;
         synth->voices[v].oscillators[1].freq = A_4 * pow(2, a4_diff / 12.0) + (5 * synth->detune);
         synth->voices[v].oscillators[2].freq = A_4 * pow(2, a4_diff / 12.0) - (5 * synth->detune);
