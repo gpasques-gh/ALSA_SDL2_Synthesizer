@@ -37,7 +37,7 @@ The up arrow key move the keys up an octave and the down arrow key move the keys
 # Dependencies 💻
 pulseaudio  
 libasound-dev  
-raylib
+raylib  
 raygui 
 
 # Compile and run 🛠️
