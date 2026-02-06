@@ -101,7 +101,8 @@ int main(int argc, char **argv)
         .cutoff = 0.5,
         .prev_input = 0.0,
         .prev_output = 0.0,
-        .adsr = &filter_adsr
+        .adsr = &filter_adsr,
+        .env = false
     };
 
     synth_t synth =
@@ -219,15 +220,13 @@ int main(int argc, char **argv)
 
     while (!WindowShouldClose())
     {
-        BeginDrawing();
-        ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-        render_informations(&params);
+        
         
 
         if (keyboard_input)
         {
             handle_input(&synth, keyboard_layout, &octave);
-            handle_release(&synth, keyboard_input, &octave);
+            handle_release(&synth, keyboard_input, octave);
         }
         
 
@@ -248,7 +247,10 @@ int main(int argc, char **argv)
             snd_pcm_prepare(handle);
         }
 
-        render_waveform(buffer);
+        BeginDrawing();
+            ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+            render_waveform(buffer);
+            render_informations(&params);
         EndDrawing();
 
        

@@ -179,9 +179,14 @@ void render_synth(synth_t *synth, short *buffer)
 
     for (int i = 0; i < FRAMES; i++)
     { /* Low-pass filter and gain processing */
-        double env_cutoff = synth->filter->cutoff + adsr_process(synth->filter->adsr) / 2;
-        if (env_cutoff > 1.0) env_cutoff = 1.0;
-    
+        
+        double env_cutoff = synth->filter->cutoff;
+        if (synth->filter->env)
+        {
+            env_cutoff = synth->filter->cutoff + adsr_process(synth->filter->adsr) / 2;
+            if (env_cutoff > 1.0) env_cutoff = 1.0;
+        }
+        
         double sample = temp_buffer[i] * gain;
         if (sample > 1.0)
             sample = 1.0;

@@ -70,8 +70,8 @@ typedef struct
 {
     voice_t *voices;
     lp_filter_t *filter;
-    double detune;
-    double amp;
+    float detune;
+    float amp;
 } synth_t;
 
 /*
