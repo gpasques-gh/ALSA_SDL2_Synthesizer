@@ -143,8 +143,8 @@ render_white_keys()
 {
     for (int i = 0; i < WHITE_KEYS; i++)
     {
-       DrawRectangleLines(i * WHITE_KEYS_WIDTH, HEIGHT - WHITE_KEYS_HEIGHT, 
-        WHITE_KEYS_WIDTH, WHITE_KEYS_HEIGHT, BLACK);
+        DrawRectangleLines(i * WHITE_KEYS_WIDTH, HEIGHT - WHITE_KEYS_HEIGHT, 
+            WHITE_KEYS_WIDTH + 1, WHITE_KEYS_HEIGHT, BLACK);   
     }
 }
 
@@ -180,9 +180,10 @@ render_key(int midi_note)
     int width = 0, height = 0, x = 0, y = 0, is_black = 0;
     get_key_position(midi_note, &x, &y, &width, &height, &is_black);
 
-
     DrawRectangle(x, y, width, height, (Color){151, 232, 255, 255});
     DrawRectangleLines(x, y, width, height, BLACK);
+    /* Avoid double thick line */
+    if (!is_black) DrawLine(x + width, y, x + width, y + height - 1, (Color){151, 232, 255, 255});
 }
 
 /* Outputs a given MIDI note rectangle parameters (x, y, width and height) */

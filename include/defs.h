@@ -22,10 +22,10 @@
 #define AZERTY 1
 
 /* Keyboard note keys */
-#define kC_QWERTY KEY_A
-#define kC_AZERTY KEY_Q
-#define kC_SHARP_QWERTY KEY_W
-#define kC_SHARP_AZERTY KEY_Z
+#define kC_QWERTY KEY_Q
+#define kC_AZERTY KEY_A
+#define kC_SHARP_QWERTY KEY_Z
+#define kC_SHARP_AZERTY KEY_W
 #define kD KEY_S
 #define kD_SHARP KEY_E
 #define kE KEY_D
@@ -80,7 +80,7 @@
 #define LATENCY 40000
 
 /* SDL interface */
-#define WIDTH 1200
+#define WIDTH 1196
 #define HEIGHT 800
 #define TITLE "ALSA & SDL Synthesizer"
 

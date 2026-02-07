@@ -212,6 +212,9 @@ int main(int argc, char **argv)
         .dropbox_b_b = &dropbox_b_b,
         .dropbox_c_b = &dropbox_c_b
     };
+
+    
+    
     
     InitWindow(WIDTH, HEIGHT, "ALSA & raygui synthesizer");
     Font annotation = LoadFont("Regular.ttf");

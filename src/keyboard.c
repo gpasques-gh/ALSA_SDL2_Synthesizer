@@ -14,41 +14,41 @@
 void handle_input(synth_t *synth, int layout, int *octave)
 {
     int octave_length = *octave * 12;
-    if (IsKeyDown(kC_QWERTY))
+    if (IsKeyPressed(kC_QWERTY))
         if (layout == QWERTY)
             assign_note(synth, octave_length + nC);
-    if (IsKeyDown(kC_AZERTY))
+    if (IsKeyPressed(kC_AZERTY))
         if (layout == AZERTY)
             assign_note(synth, octave_length + nC);
-    if (IsKeyDown(kC_SHARP_QWERTY))
+    if (IsKeyPressed(kC_SHARP_QWERTY))
         if (layout == QWERTY)
             assign_note(synth, octave_length + nC_SHARP);
-    if (IsKeyDown(kC_SHARP_AZERTY))
+    if (IsKeyPressed(kC_SHARP_AZERTY))
         if (layout == AZERTY)
             assign_note(synth, octave_length + nC_SHARP);
-    if (IsKeyDown(kD))
+    if (IsKeyPressed(kD))
         assign_note(synth, octave_length + nD);
-    if (IsKeyDown(kD_SHARP))
+    if (IsKeyPressed(kD_SHARP))
         assign_note(synth, octave_length + nD_SHARP);
-    if (IsKeyDown(kE))
+    if (IsKeyPressed(kE))
         assign_note(synth, octave_length + nE);
-    if (IsKeyDown(kF))
+    if (IsKeyPressed(kF))
         assign_note(synth, octave_length + nF);
-    if (IsKeyDown(kF_SHARP))
+    if (IsKeyPressed(kF_SHARP))
         assign_note(synth, octave_length + nF_SHARP);
-    if (IsKeyDown(kG))
+    if (IsKeyPressed(kG))
         assign_note(synth, octave_length + nG);
-    if (IsKeyDown(kG_SHARP))
+    if (IsKeyPressed(kG_SHARP))
         assign_note(synth, octave_length + nG_SHARP);
-    if (IsKeyDown(kA))
+    if (IsKeyPressed(kA))
         assign_note(synth, octave_length + nA);
-    if (IsKeyDown(kA_SHARP))
+    if (IsKeyPressed(kA_SHARP))
         assign_note(synth, octave_length + nA_SHARP);
-    if (IsKeyDown(kB))
+    if (IsKeyPressed(kB))
         assign_note(synth, octave_length + nB);
-    if (IsKeyDown(KEY_UP))
+    if (IsKeyPressed(KEY_UP))
         (*octave)++;
-    else if (IsKeyDown(KEY_DOWN))
+    else if (IsKeyPressed(KEY_DOWN))
         (*octave)--;
 }
 
@@ -121,7 +121,7 @@ void assign_note(synth_t *synth, int midi_note)
 void release_note(synth_t *synth, int midi_note)
 {
     for (int v = 0; v < VOICES; v++)
-        if (synth->voices[v].note == midi_note && synth->voices[v].active)
+        if (synth->voices[v].note == midi_note && synth->voices[v].active && synth->voices[v].adsr->state != ENV_RELEASE)
         {
             synth->voices[v].adsr->state = ENV_RELEASE;
             break;
