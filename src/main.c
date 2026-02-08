@@ -195,10 +195,12 @@ int main(int argc, char **argv)
 
 
     int dropbox_a = 0, dropbox_b = 0, dropbox_c = 0;
-    bool dropbox_a_b = false, dropbox_b_b = false, dropbox_c_b = false;
+    bool dropbox_a_b = false, dropbox_b_b = false, dropbox_c_b = false, saving_preset = false;
+    char filename[1024] = "\0";
 
     params_t params =
     {
+        .filename = filename,
         .attack = &attack,
         .decay = &decay,
         .sustain = &sustain,
@@ -210,7 +212,8 @@ int main(int argc, char **argv)
         .dropbox_c = &dropbox_c,
         .dropbox_a_b = &dropbox_a_b,
         .dropbox_b_b = &dropbox_b_b,
-        .dropbox_c_b = &dropbox_c_b
+        .dropbox_c_b = &dropbox_c_b,
+        .saving_preset = &saving_preset
     };
 
     
@@ -224,7 +227,7 @@ int main(int argc, char **argv)
 
     while (!WindowShouldClose())
     {
-        if (keyboard_input)
+        if (keyboard_input && !*params.saving_preset)
         {
             handle_input(&synth, keyboard_layout, &octave);
             handle_release(&synth, keyboard_input, octave);

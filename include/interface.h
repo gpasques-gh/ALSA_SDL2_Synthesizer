@@ -2,6 +2,8 @@
 #define INTERFACE_H
 
 #include <raygui.h>
+#include <libxml2/libxml/parser.h>
+
 
 #include "defs.h"
 #include "synth.h"
@@ -10,11 +12,12 @@
 typedef 
 struct 
 {
+    char *filename;
     float *attack, *decay, *sustain, *release;
     adsr_t *filter_envelope;
     synth_t *synth;
     int *dropbox_a, *dropbox_b, *dropbox_c; 
-    bool *dropbox_a_b, *dropbox_b_b, *dropbox_c_b;
+    bool *dropbox_a_b, *dropbox_b_b, *dropbox_c_b, *saving_preset;
 } params_t;
 
 /*
@@ -52,6 +55,16 @@ get_key_position(int midi_note, int *x, int *y,
 /* Returns if a MIDI note is a assigned to a black key or not */
 int 
 is_black_key(int midi_note);
+
+int 
+save_preset(params_t *params);
+
+
+int
+load_preset(params_t *params);
+
+int 
+parse_adsr(xmlNode *adsr_root_node, params_t *params, bool filter);
 
 
 #endif
