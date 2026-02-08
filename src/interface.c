@@ -106,7 +106,7 @@ render_informations(
             &synth->filter->env);
 
     /* Saving preset */
-    if (GuiButton((Rectangle){ 1030, 250, 100, 40 }, "Save preset"))
+    if (GuiButton((Rectangle){ 1030, 250, 120, 40 }, "Save preset"))
         *saving_preset = true;
 
     if (*saving_preset)
@@ -117,7 +117,7 @@ render_informations(
             preset_filename, saving_preset);
             
     /* Loading preset */
-    if (GuiButton((Rectangle){ 1030, 320, 100, 40 }, "Load preset"))
+    if (GuiButton((Rectangle){ 1030, 320, 120, 40 }, "Load preset"))
         load_preset(
             synth, 
             attack, decay, sustain, release,
