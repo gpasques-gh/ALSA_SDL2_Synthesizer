@@ -69,8 +69,7 @@ render_informations(params_t *params)
     {
         *params->dropbox_a_b = !*params->dropbox_a_b;
     }
-    for (int v = 0; v < VOICES; v++)
-        params->synth->voices[v].oscillators[0].wave = *params->dropbox_a;
+    
 
     GuiLabel((Rectangle){250, 255, 110, 20}, "Oscillator B");
     if (GuiDropdownBox((Rectangle){230, 275, 140, 40 }, 
@@ -79,8 +78,7 @@ render_informations(params_t *params)
     {
         *params->dropbox_b_b = !*params->dropbox_b_b;
     }
-    for (int v = 0; v < VOICES; v++)
-            params->synth->voices[v].oscillators[1].wave = *params->dropbox_b;
+    
 
             
     GuiLabel((Rectangle){420, 255, 110, 20}, "Oscillator C");
@@ -90,35 +88,34 @@ render_informations(params_t *params)
     {
         *params->dropbox_c_b = !*params->dropbox_c_b;
     }
-    for (int v = 0; v < VOICES; v++)
-            params->synth->voices[v].oscillators[2].wave = *params->dropbox_c;
+    
 
 
     /* Synth parameters */
     GuiGroupBox((Rectangle){ 625, 220, WIDTH / 2 - 50, 160 }, "Synth parameters");
 
-    GuiLabel((Rectangle){ 750, 230, 100, 20}, "Cutoff");
-    GuiSlider((Rectangle){ 655, 250, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 695, 230, 100, 20}, "Cutoff");
+    GuiSlider((Rectangle){ 645, 250, 170, 40 }, NULL, NULL, 
             &params->synth->filter->cutoff, 0.0f, 1.0f);
 
-    GuiLabel((Rectangle){ 750, 300, 100, 20}, "Detune");
-    GuiSlider((Rectangle){ 655, 320, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 695, 300, 100, 20}, "Detune");
+    GuiSlider((Rectangle){ 645, 320, 170, 40 }, NULL, NULL, 
             &params->synth->detune, 0.0f, 1.0f);
 
-    GuiLabel((Rectangle){ 1010, 230, 100, 20}, "Amp");
-    GuiSlider((Rectangle){ 915, 250, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 955, 230, 100, 20}, "Amp");
+    GuiSlider((Rectangle){ 840, 250, 170, 40 }, NULL, NULL, 
             &params->synth->amp, 0.0f, 1.0f);
 
-    GuiCheckBox((Rectangle){915, 320, 40, 40}, "Filter envelope", 
+    GuiCheckBox((Rectangle){840, 320, 40, 40}, "Filter ADSR", 
             &params->synth->filter->env);
 
 
-    if (GuiButton((Rectangle){ 1010, 320, 80, 40 }, "Save preset"))
+    if (GuiButton((Rectangle){ 1030, 250, 100, 40 }, "Save preset"))
     {
         *params->saving_preset = true;
     }
 
-    if (GuiButton((Rectangle){ 1010, 420, 80, 40 }, "Load preset"))
+    if (GuiButton((Rectangle){ 1030, 320, 100, 40 }, "Load preset"))
     {
         load_preset(params);
     }
@@ -319,13 +316,13 @@ save_preset(params_t *params)
         /* Oscillators waveforms */
         osc_node = xmlNewChild(root_node, NULL, BAD_CAST "oscillators", NULL);
         /* Oscillator A */
-        snprintf(text_element, 1024, "%d", params->synth->voices[0].oscillators[0].wave);
+        snprintf(text_element, 1024, "%d", *params->dropbox_a);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_a", BAD_CAST text_element);
         /* Oscillator B */
-        snprintf(text_element, 1024, "%d", params->synth->voices[0].oscillators[1].wave);
+        snprintf(text_element, 1024, "%d", *params->dropbox_b);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_b", BAD_CAST text_element);
         /* Oscillator C */
-        snprintf(text_element, 1024, "%d", params->synth->voices[0].oscillators[2].wave);
+        snprintf(text_element, 1024, "%d", *params->dropbox_c);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_c", BAD_CAST text_element);
 
         /* Effects */
@@ -435,7 +432,7 @@ load_preset(params_t *params)
                 {
                     xmlChar *osc_a = xmlNodeGetContent(child);
                     char *end_ptr = NULL;
-                    int osc_a_wave = strtol((const char *)osc_a, &end_ptr, 10);
+                    short osc_a_wave = strtol((const char *)osc_a, &end_ptr, 10);
                     if (end_ptr == (char *)osc_a)
                     {
                         fprintf(stderr, "bad osc a value.\n");
@@ -443,15 +440,14 @@ load_preset(params_t *params)
                     }
                     if (osc_a_wave > 4) osc_a_wave = 4;
                     else if (osc_a_wave < 0) osc_a_wave = 0;
-                    for (int v = 0; v < VOICES; v++)
-                        params->synth->voices[v].oscillators[0].wave = osc_a_wave;
+                    *params->dropbox_a = osc_a_wave;
                 }
                 else if (child->type == XML_ELEMENT_NODE &&
                     xmlStrcmp(child->name, BAD_CAST "osc_b") == 0)
                 {
                     xmlChar *osc_b = xmlNodeGetContent(child);
                     char *end_ptr = NULL;
-                    int osc_b_wave = strtol((const char *)osc_b, &end_ptr, 10);
+                    short osc_b_wave = strtol((const char *)osc_b, &end_ptr, 10);
                     if (end_ptr == (char *)osc_b)
                     {
                         fprintf(stderr, "bad osc b value.\n");
@@ -459,15 +455,14 @@ load_preset(params_t *params)
                     }
                     if (osc_b_wave > 3) osc_b_wave = 3;
                     else if (osc_b_wave < 0) osc_b_wave = 0;
-                    for (int v = 0; v < VOICES; v++)
-                        params->synth->voices[v].oscillators[1].wave = osc_b_wave;
+                    *params->dropbox_b = osc_b_wave;
                 }
                 else if (child->type == XML_ELEMENT_NODE &&
                     xmlStrcmp(child->name, BAD_CAST "osc_c") == 0)
                 {
                     xmlChar *osc_c = xmlNodeGetContent(child);
                     char *end_ptr = NULL;
-                    int osc_c_wave = strtol((const char *)osc_c, &end_ptr, 10);
+                    short osc_c_wave = strtol((const char *)osc_c, &end_ptr, 10);
                     if (end_ptr == (char *)osc_c)
                     {
                         fprintf(stderr, "bad osc b value.\n");
@@ -475,8 +470,7 @@ load_preset(params_t *params)
                     }
                     if (osc_c_wave > 3) osc_c_wave = 3;
                     else if (osc_c_wave < 0) osc_c_wave = 0;
-                    for (int v = 0; v < VOICES; v++)
-                        params->synth->voices[v].oscillators[2].wave = osc_c_wave;
+                    *params->dropbox_c = osc_c_wave;
                 }
             }
         }

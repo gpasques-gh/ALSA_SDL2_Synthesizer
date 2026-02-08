@@ -78,6 +78,8 @@ int main(int argc, char **argv)
 
     int octave = DEFAULT_OCTAVE;
 
+    int osc_a = SINE_WAVE, osc_b = SINE_WAVE, osc_c = SINE_WAVE;
+
     float attack = 0.2;
     float decay = 0.3;
     float sustain = 0.7;
@@ -153,8 +155,10 @@ int main(int argc, char **argv)
         {
             synth.voices[i].oscillators[j].freq = 0.0;
             synth.voices[i].oscillators[j].phase = 0.0;
-            synth.voices[i].oscillators[j].wave = SINE_WAVE;
         }
+        synth.voices[i].oscillators[0].wave = &osc_a;
+        synth.voices[i].oscillators[1].wave = &osc_b;
+        synth.voices[i].oscillators[2].wave = &osc_c;
     }
 
     if (snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0) < 0)
@@ -193,8 +197,6 @@ int main(int argc, char **argv)
             goto cleanup_alsa;
         }
 
-
-    int dropbox_a = 0, dropbox_b = 0, dropbox_c = 0;
     bool dropbox_a_b = false, dropbox_b_b = false, dropbox_c_b = false, saving_preset = false;
     char filename[1024] = "\0";
 
@@ -207,9 +209,9 @@ int main(int argc, char **argv)
         .release = &release,
         .filter_envelope = filter.adsr,
         .synth = &synth,
-        .dropbox_a = &dropbox_a,
-        .dropbox_b = &dropbox_b,
-        .dropbox_c = &dropbox_c,
+        .dropbox_a = &osc_a,
+        .dropbox_b = &osc_b,
+        .dropbox_c = &osc_c,
         .dropbox_a_b = &dropbox_a_b,
         .dropbox_b_b = &dropbox_b_b,
         .dropbox_c_b = &dropbox_c_b,
@@ -260,6 +262,7 @@ int main(int argc, char **argv)
                 if (synth.voices[v].active && synth.voices[v].adsr->state != ENV_RELEASE && !is_black_key(synth.voices[v].note))
                     render_key(synth.voices[v].note);
 
+                
             render_black_keys();
             for (int v = 0; v < VOICES; v++)
                 if (synth.voices[v].active && synth.voices[v].adsr->state != ENV_RELEASE && is_black_key(synth.voices[v].note))

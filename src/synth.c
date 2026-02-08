@@ -132,7 +132,7 @@ render_synth(synth_t *synth, short *buffer)
                 double phase_inc = osc->freq / RATE;
                 double sample;
 
-                switch (osc->wave)
+                switch (*osc->wave)
                 {
                 case SINE_WAVE:
                     sample = sin(2.0 * M_PI * osc->phase);

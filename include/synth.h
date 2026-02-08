@@ -38,7 +38,7 @@ typedef
 struct
 {
     double freq, phase;
-    short wave;
+    int *wave;
 } osc_t;
 
 /* Low-pass filter structure */
