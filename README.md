@@ -12,6 +12,7 @@ Not tested, but MIDI can maybe work in a Linux VM using USB passthrough, althoug
 - Keyboard input
 - MIDI input
 - Raygui graphical user interface
+- Saving and loading presets configurations XML files
 
 # GUI 🖼️
 The GUI shows all of the informations about the synth and let the user configure its parameters graphically :
@@ -22,6 +23,7 @@ The GUI shows all of the informations about the synth and let the user configure
 - Amplification level
 - Detune level
 - Oscillators selected waveforms
+- Buttons to load and save presets into the preset folder
 - Piano keyboard showing which keys are being pressed
 
 # MIDI Input 🎹
@@ -40,6 +42,7 @@ libasound-dev
 raylib  
 raygui  
 zenity  
+libxml2
 
 # Compile and run 🛠️
 To compile the projet : `make`  

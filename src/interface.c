@@ -28,85 +28,87 @@ render_informations(
     bool *ddm_a, bool *ddm_b, bool *ddm_c,
     char *preset_filename, bool *saving_preset)
 {
+    GuiLabel((Rectangle){WIDTH / 2 - 115, 5, 230, 20}, "ALSA & raygui Synthesizer");
+
     /* ADSR envelope sliders */
-    GuiGroupBox((Rectangle){ 30, 30, WIDTH / 2 - 50, 160 }, "ADSR Envelope");
+    GuiGroupBox((Rectangle){ 30, 40, WIDTH / 2 - 50, 160 }, "ADSR Envelope");
     /* Attack */
-    GuiLabel((Rectangle){ 155, 40, 100, 20}, "Attack");
-    GuiSlider((Rectangle){ 60, 60, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 150, 50, 100, 20}, "Attack");
+    GuiSlider((Rectangle){ 60, 70, 225, 40 }, NULL, NULL, 
             attack, 0.0f, 2.0f);
     /* Decay */
-    GuiLabel((Rectangle){ 155, 110, 100, 20}, "Decay");
-    GuiSlider((Rectangle){ 60, 130, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 150, 120, 100, 20}, "Decay");
+    GuiSlider((Rectangle){ 60, 140, 225, 40 }, NULL, NULL, 
             decay, 0.0f, 2.0f);
     /* Sustain */
-    GuiLabel((Rectangle){ 415, 40, 100, 20}, "Sustain");
-    GuiSlider((Rectangle){ 320, 60, 225, 40 }, NULL, NULL,
+    GuiLabel((Rectangle){ 410, 50, 100, 20}, "Sustain");
+    GuiSlider((Rectangle){ 320, 70, 225, 40 }, NULL, NULL,
             sustain, 0.0f, 1.0f);
     /* Release */
-    GuiLabel((Rectangle){ 415, 110, 100, 20}, "Release");
-    GuiSlider((Rectangle){ 320, 130, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 410, 120, 100, 20}, "Release");
+    GuiSlider((Rectangle){ 320, 140, 225, 40 }, NULL, NULL, 
             release, 0.0f, 1.0f);
 
     /* Filter ADSR envelope sliders */
-    GuiGroupBox((Rectangle){ 625, 30, WIDTH / 2 - 50, 160 }, "Filter ADSR Envelope");
+    GuiGroupBox((Rectangle){ 625, 40, WIDTH / 2 - 50, 160 }, "Filter ADSR Envelope");
     /* Attack */
-    GuiLabel((Rectangle){ 750, 40, 100, 20}, "Attack");
-    GuiSlider((Rectangle){ 655, 60, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 745, 50, 100, 20}, "Attack");
+    GuiSlider((Rectangle){ 655, 70, 225, 40 }, NULL, NULL, 
             synth->filter->adsr->attack, 0.0f, 2.0f);
     /* Decay */
-    GuiLabel((Rectangle){ 750, 110, 100, 20}, "Decay");
-    GuiSlider((Rectangle){ 655, 130, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 745, 120, 100, 20}, "Decay");
+    GuiSlider((Rectangle){ 655, 140, 225, 40 }, NULL, NULL, 
             synth->filter->adsr->decay, 0.0f, 2.0f);
     /* Sustain */
-    GuiLabel((Rectangle){ 1010, 40, 100, 20}, "Sustain");
-    GuiSlider((Rectangle){ 915, 60, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 1005, 50, 100, 20}, "Sustain");
+    GuiSlider((Rectangle){ 915, 70, 225, 40 }, NULL, NULL, 
             synth->filter->adsr->sustain, 0.0f, 1.0f);
     /* Release */
-    GuiLabel((Rectangle){ 1010, 110, 100, 20}, "Release");
-    GuiSlider((Rectangle){ 915, 130, 225, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 1005, 120, 100, 20}, "Release");
+    GuiSlider((Rectangle){ 915, 140, 225, 40 }, NULL, NULL, 
             synth->filter->adsr->release, 0.0f, 1.0f);
 
     /* Oscillators waveforms */
-    GuiGroupBox((Rectangle){ 30, 220, WIDTH / 2 - 50, 160 }, "Oscillators");
+    GuiGroupBox((Rectangle){ 30, 230, WIDTH / 2 - 50, 160 }, "Oscillators");
     /* Oscillator A */
-    GuiLabel((Rectangle){80, 255, 110, 20}, "Oscillator A");
-    if (GuiDropdownBox((Rectangle){60, 275, 140, 40 }, 
-        "#01#Sine wave;#02#Square wave;#03#Triangle wave;#04#Sawtooth wave", 
+    GuiLabel((Rectangle){80, 265, 110, 20}, "Oscillator A");
+    if (GuiDropdownBox((Rectangle){60, 285, 140, 40 }, 
+        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth", 
         wave_a, *ddm_a))
             *ddm_a = !*ddm_a;
     /* Oscillator B */
-    GuiLabel((Rectangle){250, 255, 110, 20}, "Oscillator B");
-    if (GuiDropdownBox((Rectangle){230, 275, 140, 40 }, 
-        "#01#Sine wave;#02#Square wave;#03#Triangle wave;#04#Sawtooth wave", 
+    GuiLabel((Rectangle){250, 265, 110, 20}, "Oscillator B");
+    if (GuiDropdownBox((Rectangle){230, 285, 140, 40 }, 
+        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth", 
         wave_b, *ddm_b))
             *ddm_b = !*ddm_b;
     /* Oscillator C */
-    GuiLabel((Rectangle){420, 255, 110, 20}, "Oscillator C");
-    if (GuiDropdownBox((Rectangle){400, 275, 140, 40 }, 
-        "#01#Sine wave;#02#Square wave;#03#Triangle wave;#04#Sawtooth wave", 
+    GuiLabel((Rectangle){420, 265, 110, 20}, "Oscillator C");
+    if (GuiDropdownBox((Rectangle){400, 285, 140, 40 }, 
+        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth", 
         wave_c, *ddm_c))
             *ddm_c = !*ddm_c;
     
     /* Synth parameters */
-    GuiGroupBox((Rectangle){ 625, 220, WIDTH / 2 - 50, 160 }, "Synth parameters");
+    GuiGroupBox((Rectangle){ 625, 230, WIDTH / 2 - 50, 160 }, "Synth parameters");
     /* Filter cutoff */
-    GuiLabel((Rectangle){ 695, 230, 100, 20}, "Cutoff");
-    GuiSlider((Rectangle){ 645, 250, 170, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 700, 240, 100, 20}, "Cutoff");
+    GuiSlider((Rectangle){ 645, 260, 170, 40 }, NULL, NULL, 
             &synth->filter->cutoff, 0.0f, 1.0f);
     /* Synth detune effect */
-    GuiLabel((Rectangle){ 695, 300, 100, 20}, "Detune");
-    GuiSlider((Rectangle){ 645, 320, 170, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 700, 310, 100, 20}, "Detune");
+    GuiSlider((Rectangle){ 645, 330, 170, 40 }, NULL, NULL, 
             &synth->detune, 0.0f, 1.0f);
     /* Amplification */
-    GuiLabel((Rectangle){ 955, 230, 100, 20}, "Amp");
-    GuiSlider((Rectangle){ 840, 250, 170, 40 }, NULL, NULL, 
+    GuiLabel((Rectangle){ 910, 240, 100, 20}, "Amp");
+    GuiSlider((Rectangle){ 840, 260, 170, 40 }, NULL, NULL, 
             &synth->amp, 0.0f, 1.0f);
     /* Filter ADSR ON/OFF */
-    GuiCheckBox((Rectangle){840, 320, 40, 40}, "Filter ADSR", 
+    GuiCheckBox((Rectangle){840, 330, 40, 40}, "Filter ADSR", 
             &synth->filter->env);
 
     /* Saving preset */
-    if (GuiButton((Rectangle){ 1030, 250, 120, 40 }, "Save preset"))
+    if (GuiButton((Rectangle){ 1030, 260, 120, 40 }, "Save preset"))
         *saving_preset = true;
 
     if (*saving_preset)
@@ -117,7 +119,7 @@ render_informations(
             preset_filename, saving_preset);
             
     /* Loading preset */
-    if (GuiButton((Rectangle){ 1030, 320, 120, 40 }, "Load preset"))
+    if (GuiButton((Rectangle){ 1030, 330, 120, 40 }, "Load preset"))
         load_preset(
             synth, 
             attack, decay, sustain, release,
@@ -129,9 +131,9 @@ render_informations(
 void 
 render_waveform(short *buffer)
 {
-    GuiGroupBox((Rectangle){ 30, 410, WIDTH - 55, 160}, "Waveform");
+    GuiGroupBox((Rectangle){ 30, 420, WIDTH - 55, 160}, "Waveform");
 
-    int mid_y = HEIGHT / 4 + 25;
+    int mid_y = HEIGHT / 4 + 35;
     int y = HEIGHT / 3 + mid_y;
 
     int step = 1;
@@ -145,10 +147,10 @@ render_waveform(short *buffer)
         int y2 = y - ((buffer[i + step] * mid_y) / 32768);
 
         /* Preventing going past the GuiGroupBox */
-        if (y1 < 410) y1 = 410;
-        if (y2 < 410) y2 = 410;
-        if (y1 > 570) y1 = 570;
-        if (y2 > 570) y2 = 570;
+        if (y1 < 420) y1 = 420;
+        if (y2 < 420) y2 = 420;
+        if (y1 > 580) y1 = 580;
+        if (y2 > 580) y2 = 580;
 
         DrawLine(x1, y1, x2, y2, BLACK);
     }
