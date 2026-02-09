@@ -199,15 +199,14 @@ int main(int argc, char **argv)
     
     snd_pcm_prepare(handle);
 
-    /* 5 sound buffer of silence to avoid noise at start */
+    /* Sound buffer */
     short buffer[FRAMES];
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < FRAMES; j++)
-            buffer[j] = 0;
-        snd_pcm_writei(handle, buffer, FRAMES);
-    }
 
+    /* We send one sound buffer of silence 
+    into the sound card to avoid noise at start */
+    memset(buffer, 0, sizeof(short) * FRAMES);
+    snd_pcm_writei(handle, buffer, FRAMES);
+    
     /* Initialize MIDI input */
     snd_rawmidi_t *midi_in;
     if (midi_input)
@@ -221,12 +220,12 @@ int main(int argc, char **argv)
     char audio_filename[1024] = "\0";
     FILE *fwav = NULL;
     wav_header_t header;
+    unsigned int count = 0;
 
-    /* GUI rendering and interacting variables */
+    /* GUI rendering and interacting related variables */
     bool ddm_a = false, ddm_b = false, ddm_c = false;
     bool saving_preset = false, recording = false, saving_audio_file = false;
     char filename[1024] = "\0";
-    unsigned int count = 0;
 
     /* Initialize raylib window and font */
     InitWindow(WIDTH, HEIGHT, "ALSA & raygui synthesizer");
@@ -234,12 +233,15 @@ int main(int argc, char **argv)
     GuiSetFont(annotation);
     GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize * 0.5);
 
+    /* Main loop */
     while (!WindowShouldClose())
     {
         /* Getting keyboard input if we are not currently inputing a preset or an audio file name*/
         if (keyboard_input && !saving_preset && !saving_audio_file)
         {
+            /* Handling the pressed keys of the keyboard layout */
             handle_input(&synth, keyboard_layout, &octave);
+            /* Handling the released keys of the keyboard layout */
             handle_release(&synth, keyboard_input, octave);
         }
 
@@ -265,12 +267,14 @@ int main(int argc, char **argv)
 
         /* WAV file management */
         if (fwav != NULL && recording == true)
-        {   /* We write the sound buffer to the WAV file */
+        {   /* The recording is ongoing and the file has already been created, 
+            so we write the sound buffer to the WAV file and increment the file writing counter */
             fwrite(buffer, 2, FRAMES, fwav);
             count++;
         }
         else if (fwav == NULL && recording == true)
-        {   /* We initialize the WAV header and create the wav file with the given filename */
+        {   /* The user started the recording from the GUI and inserted the audio filename, 
+            so we initialize the WAV header and create the wav file with the given filename */
             char audio_full_filename[1024] = "audio/";
             strcat(audio_full_filename, audio_filename);
             strcat(audio_full_filename, ".wav");
@@ -279,7 +283,9 @@ int main(int argc, char **argv)
             audio_filename[0] = '\0';
         }
         else if (fwav != NULL && recording == false)
-        {   /* We are changing the WAV header to have the correct byte size for the data field */
+        {   /* The user stopped the recording from the GUI, 
+            so we are changing the WAV header to have the correct byte size for the data field.
+            We then close the file and reset the writing counter to zero. */
             header.sub2_size = FRAMES * count * (unsigned int)header.num_channels * (unsigned int)header.bits_per_sample / 8;
             header.chunk_size = (unsigned int)header.sub2_size + 36;
             fseek(fwav, 0, SEEK_SET);
@@ -291,8 +297,11 @@ int main(int argc, char **argv)
 
         /* Drawing the GUI */
         BeginDrawing();
+            /* Clearing the background */
             ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+            /* Rendering the waveform visualizer */
             render_waveform(buffer);
+            /* Rendering the informations GUI */
             render_informations(
                 &synth,
                 &attack, &decay, &sustain, &release,
@@ -300,14 +309,13 @@ int main(int argc, char **argv)
                 &ddm_a, &ddm_b, &ddm_c,
                 filename, audio_filename,
                 &saving_preset, &saving_audio_file, &recording);
-
             /* We render the white keys and the pressed white keys before the black keys 
             so that the black keys correctly overlap with the white keys */
             render_white_keys();
             for (int v = 0; v < VOICES; v++)
                 if (synth.voices[v].active && synth.voices[v].adsr->state != ENV_RELEASE && !is_black_key(synth.voices[v].note))
                     render_key(synth.voices[v].note);
-
+            /* Now we render the black keys */
             render_black_keys();
             for (int v = 0; v < VOICES; v++)
                 if (synth.voices[v].active && synth.voices[v].adsr->state != ENV_RELEASE && is_black_key(synth.voices[v].note))
@@ -315,12 +323,14 @@ int main(int argc, char **argv)
         EndDrawing();
     }
 
+    /* We are closing the raylib window*/
     CloseWindow();
 
+    /* We are closing the MIDI input*/
     if (midi_in)
         snd_rawmidi_close(midi_in);
 
-    /* If we quit the application during recording */
+    /* If we quit the application during recording, change WAV header and close WAV file */
     if (fwav != NULL && recording)
     {
         header.sub2_size = FRAMES * count * (unsigned int)header.num_channels * (unsigned int)header.bits_per_sample / 8;
@@ -329,7 +339,8 @@ int main(int argc, char **argv)
         fwrite(&header, 1, sizeof(header), fwav);
         close_wav_file(fwav);
     }
-
+    
+/* Cleanup gotos*/
 cleanup_alsa:
     if (handle)
     {

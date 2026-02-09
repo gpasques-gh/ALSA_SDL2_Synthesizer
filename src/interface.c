@@ -161,7 +161,7 @@ void render_waveform(short *buffer)
 
     /* Looping onto the frames of the buffer, 
     the i = 13 and FRAMES - 11 is because the waveform would go horizontally past the GuiGroupBox */
-    for (int i = 13; i < FRAMES - 11; i += step)
+    for (int i = 26; i < FRAMES - 22; i += step)
     {
         /* x coordinates */
         int x1 = (i * WIDTH) / FRAMES;
@@ -170,7 +170,7 @@ void render_waveform(short *buffer)
         int y1 = y - ((buffer[i] * mid_y) / 32768);
         int y2 = y - ((buffer[i + step] * mid_y) / 32768);
 
-        /* Preventing going vertically past the GuiGroupBox */
+        /* Preventing the waveforum going vertically past the GuiGroupBox */
         if (y1 < 420)
             y1 = 420;
         if (y2 < 420)
