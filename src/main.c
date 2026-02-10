@@ -1,11 +1,12 @@
-#include <math.h>
+#ifndef RAYGUI_IMPLEMENTATION
+#define RAYGUI_IMPLEMENTATION
+#endif 
+
 #include <unistd.h>
 #include <alsa/asoundlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
-#define RAYGUI_IMPLEMENTATION
 
+#include "defs.h"
 #include "interface.h"
 #include "synth.h"
 #include "midi.h"

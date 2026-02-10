@@ -1,7 +1,10 @@
 #ifndef DEFS_H
 #define DEFS_H
+
 #include <raylib.h>
-#include <SDL2/SDL.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* Notes semitones used for keyboard input */
 #define nC 0

@@ -1,7 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
-#include <dirent.h>
 
 #include <libxml2/libxml/parser.h>
 #include <libxml2/libxml/tree.h>
