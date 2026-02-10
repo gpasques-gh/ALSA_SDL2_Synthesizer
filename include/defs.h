@@ -67,7 +67,7 @@
 #define A_4 440
 #define RATE 44100
 #define DEFAULT_AMPLITUDE 0.5
-#define A4_POSITION 58 
+#define A4_POSITION 58
 
 /* Oscillators waveforms */
 #define SINE_WAVE 0
@@ -76,14 +76,17 @@
 #define SAWTOOTH_WAVE 3
 
 /* ALSA buffering and latency */
-#define FRAMES 512
+#define FRAMES 1024
 #define LATENCY 40000
+#define MAX_SAMPLES 512000
+#define MONO 1
+#define STEREO 2
+#define BITS 16
 
 /* SDL interface */
 #define WIDTH 1196
 #define HEIGHT 800
 #define TITLE "ALSA & SDL Synthesizer"
-
 
 /* MIDI piano visualizer */
 #define WHITE_KEYS 52
