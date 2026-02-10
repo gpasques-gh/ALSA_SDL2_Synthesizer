@@ -183,7 +183,7 @@ int load_preset(
             xmlNode *child = NULL;
             /* Looping on the filter node children */
             for (child = node->children; child; child = child->next)
-            { /* Filter ADSR envelope */
+            {   /* Filter ADSR envelope */
                 if (child->type == XML_ELEMENT_NODE &&
                     xmlStrcmp(child->name, BAD_CAST "filter_adsr") == 0)
                 {
@@ -236,7 +236,7 @@ int load_preset(
             xmlNode *child = NULL;
             /* Looping on the oscillators nodes*/
             for (child = node->children; child; child = child->next)
-            { /* Oscillator A */
+            {   /* Oscillator A */
                 if (child->type == XML_ELEMENT_NODE &&
                     xmlStrcmp(child->name, BAD_CAST "osc_a") == 0)
                 {

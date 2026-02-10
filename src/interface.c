@@ -236,7 +236,11 @@ void render_key(int midi_note)
     DrawRectangleLines(x, y, width, height, BLACK);
     /* Avoid double thick line when pressing a white key */
     if (!is_black)
-        DrawLine(x + width, y, x + width, y + height - 1, (Color){151, 232, 255, 255});
+    {
+
+        DrawLine(x + width, y + 1, x + width, y + height, (Color){151, 232, 255, 255});
+        DrawLine(x, y + height, x + width, y + height, BLACK);
+    }       
 }
 
 /* Outputs a given MIDI note rectangle parameters (x, y, width and height) */

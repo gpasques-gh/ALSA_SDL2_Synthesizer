@@ -84,7 +84,7 @@
 #define BITS 16
 
 /* SDL interface */
-#define WIDTH 1196
+#define WIDTH 1197
 #define HEIGHT 800
 #define TITLE "ALSA & SDL Synthesizer"
 
@@ -95,17 +95,5 @@
 #define WHITE_KEYS_HEIGHT HEIGHT / 4
 #define BLACK_KEYS_WIDTH WHITE_KEYS_WIDTH / 2
 #define BLACK_KEYS_HEIGHT (WHITE_KEYS_HEIGHT * 2) / 3
-
-/* File parser states */
-#define STATE_ADSR 0
-#define STATE_IN_ADSR_NUMBER 1
-#define STATE_FILTER_ADSR 2
-#define STATE_IN_FILTER_NUMBER 3
-#define STATE_SYNTH_PARAMETERS 4
-#define STATE_IN_SYNTH_PARAMETERS_NUMBER 5
-#define STATE_OSC_WAVEFORMS 6
-#define STATE_IN_OSC_WAVEFORMS_NUMBER 7
-#define STATE_ERROR 8
-#define STATE_FINAL 9
 
 #endif

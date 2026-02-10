@@ -22,6 +22,7 @@ void usage()
     fprintf(stderr, "to see this helper again, use synth -h or synth -help\n");
 }
 
+/* Main function */
 int main(int argc, char **argv)
 {
     if (argc < 2)
@@ -30,8 +31,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    
-
+    /* CLI arguments variables */
     char midi_device[256];
     int midi_input = 0;
     int keyboard_input = 0;
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 
         /* Initializing oscillators*/
         for (int j = 0; j < 3; j++)
-        { 
+        {
             synth.voices[i].oscillators[j].freq = 0.0;
             synth.voices[i].oscillators[j].phase = 0.0;
         }
@@ -197,17 +197,17 @@ int main(int argc, char **argv)
         fprintf(stderr, "error while setting sound card parameters: %s\n", snd_strerror(params_err));
         goto cleanup_alsa;
     }
-    
+
     snd_pcm_prepare(handle);
 
     /* Sound buffer */
     short buffer[FRAMES];
 
-    /* We send one sound buffer of silence 
+    /* We send one sound buffer of silence
     into the sound card to avoid noise at start */
     memset(buffer, 0, sizeof(short) * FRAMES);
     snd_pcm_writei(handle, buffer, FRAMES);
-    
+
     /* Initialize MIDI input */
     snd_rawmidi_t *midi_in;
     if (midi_input)
@@ -271,13 +271,13 @@ int main(int argc, char **argv)
 
         /* WAV file management */
         if (fwav != NULL && recording == true)
-        {   /* The recording is ongoing and the file has already been created, 
+        {   /* The recording is ongoing and the file has already been created,
             so we write the sound buffer to the WAV file and increment the file writing counter */
             fwrite(buffer, 2, FRAMES, fwav);
             count++;
         }
         else if (fwav == NULL && recording == true)
-        {   /* The user started the recording from the GUI and inserted the audio filename, 
+        {   /* The user started the recording from the GUI and inserted the audio filename,
             so we initialize the WAV header and create the wav file with the given filename */
             char audio_full_filename[1024] = "audio/";
             strcat(audio_full_filename, audio_filename);
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
             audio_filename[0] = '\0';
         }
         else if (fwav != NULL && recording == false)
-        {   /* The user stopped the recording from the GUI, 
+        {   /* The user stopped the recording from the GUI,
             so we are changing the WAV header to have the correct byte size for the data field.
             We then close the file and reset the writing counter to zero. */
             header.sub2_size = FRAMES * count * (unsigned int)header.num_channels * (unsigned int)header.bits_per_sample / 8;
@@ -313,7 +313,7 @@ int main(int argc, char **argv)
                 &ddm_a, &ddm_b, &ddm_c,
                 preset_filename, audio_filename,
                 &saving_preset, &saving_audio_file, &recording);
-            /* We render the white keys and the pressed white keys before the black keys 
+            /* We render the white keys and the pressed white keys before the black keys
             so that the black keys correctly overlap with the white keys */
             render_white_keys();
             for (int v = 0; v < VOICES; v++)
@@ -343,7 +343,7 @@ int main(int argc, char **argv)
         fwrite(&header, 1, sizeof(header), fwav);
         close_wav_file(fwav);
     }
-    
+
 /* Cleanup gotos */
 cleanup_alsa:
     if (handle)
