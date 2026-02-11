@@ -111,6 +111,7 @@ void render_synth_params(synth_t *synth)
                 &synth->filter->env);
 }
 
+/* Render the options menu */
 void render_options(
     char *audio_filename,
     bool *saving_preset, bool *loading_preset,
@@ -118,23 +119,21 @@ void render_options(
 {
      /* Options */
     GuiGroupBox((Rectangle){1190, 230, 554, 160}, "Options");
-
     /* Saving preset */
     if (GuiButton((Rectangle){1210, 240, 120, 40}, "Save preset"))
         *saving_preset = true;
-
     /* Loading preset */
     if (GuiButton((Rectangle){1210, 290, 120, 40}, "Load preset"))
         *loading_preset = true;
-
-        /* Recording audio */
+    /* Recording audio */
     int record_button = GuiButton((Rectangle){1210, 340, 120, 40}, "Record");
-
+    /* If we pressed the record button for the first time */
     if (record_button && !*recording)
         *saving_audio_file = true;
+    /* Else we stop recording */
     else if (record_button && *recording)
         *recording = false;
-
+    /* Saving audio filename*/
     if (*saving_audio_file)
     {
         int res = GuiTextInputBox((Rectangle){WIDTH / 2 - 100, HEIGHT / 2 - 50, 200, 100},
@@ -147,7 +146,7 @@ void render_options(
             *saving_audio_file = false;
         }
     }
-
+    /* Drawing a little rectangle that shows we are recording */
     if (*recording)
         DrawRectangleRounded((Rectangle){1340, 340, 5, 40}, 0.2, 10, RED);
 }
