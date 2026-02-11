@@ -359,3 +359,21 @@ voice_t *get_free_voice(synth_t *synth)
             return &synth->voices[i];
     return NULL;
 }
+
+/* Insertion sort algorithm for the voices of a synth_t, used for arpeggiator */
+void sort_synth_voices(synth_t *synth)
+{
+    for (int v = 1; v < VOICES; v++)
+    {
+        voice_t current = synth->voices[v];
+        int i = v - 1;
+        
+        while (i >= 0 && synth->voices[i].note > current.note)
+        {
+            synth->voices[i + 1] = synth->voices[i];
+            i--;
+        }
+
+        synth->voices[i + 1] = current;
+    }
+}

@@ -135,6 +135,10 @@ void assign_note(synth_t *synth, int midi_note)
         /* If it's the first note we hit and the filter ADSR is ON, launch filter ADSR */
         if (active_voices == 0 && synth->filter->env)
             synth->filter->adsr->state = ENV_ATTACK;
+
+        if (synth->arp && active_voices > 0)
+            sort_synth_voices(synth);
+
         return;
     }
 }
@@ -142,6 +146,7 @@ void assign_note(synth_t *synth, int midi_note)
 /* Release a note from a synth voice, does nothing if the note isn't pressed */
 void release_note(synth_t *synth, int midi_note)
 {
+    int active_voices = 0;
     /* We loop over the voices of the synthesizer */
     for (int v = 0; v < VOICES; v++)
         /* If the voice is active, is not in ADSR release state and has the correct MIDI note assigned to it, 
@@ -150,7 +155,11 @@ void release_note(synth_t *synth, int midi_note)
             synth->voices[v].active && 
             synth->voices[v].adsr->state != ENV_RELEASE)
         {
+            active_voices++;
             synth->voices[v].adsr->state = ENV_RELEASE;
             break; /* Two voices can't have the same note, we can break */
         }
+
+    if (synth->arp && active_voices > 0)
+            sort_synth_voices(synth);
 }

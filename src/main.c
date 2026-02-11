@@ -130,7 +130,10 @@ int main(int argc, char **argv)
             .amp = DEFAULT_AMPLITUDE,
             .detune = 0.0,
             .filter = &filter,
-            .lfo = &lfo};
+            .lfo = &lfo,
+            .arp = true,
+            .active_arp = 0,
+            .bpm = 100};
 
     /* Error while allocating the synthesizer voices */
     if (synth.voices == NULL)

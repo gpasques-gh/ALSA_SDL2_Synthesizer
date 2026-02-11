@@ -79,6 +79,8 @@ typedef struct
     float lfo_detune;
     float amp;
     float lfo_amp;
+    int bpm, active_arp;
+    bool arp;
 } synth_t;
 
 /*
@@ -116,5 +118,8 @@ lp_process(lp_filter_t *filter, double input,
  * Used to assign a note send by MIDI or keyboard to the first free voice
  */
 voice_t *get_free_voice(synth_t *synth);
+
+/* Insertion sort algorithm for the voices of a synth_t, used for arpeggiator */
+void sort_synth_voices(synth_t *synth);
 
 #endif
