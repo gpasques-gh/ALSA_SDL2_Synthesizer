@@ -1,7 +1,6 @@
 #ifndef XML_H
 #define XML_H
 
-#include <raygui.h>
 #include <libxml2/libxml/parser.h>
 #include <libxml2/libxml/tree.h>
 
@@ -17,11 +16,11 @@
  * - Amplification
  */
 int save_preset(
-    synth_t *synth,
-    float *attack, float *decay,
-    float *sustain, float *release,
-    int *wave_a, int *wave_b, int *wave_c,
-    char *preset_filename, bool *saving_preset, 
+    synth_t synth,
+    float attack, float decay,
+    float sustain, float release,
+    int wave_a, int wave_b, int wave_c,
+    char *preset_filename, bool *saving_preset,
     bool distortion, bool overdrive, 
     float distortion_amount);
 
@@ -40,7 +39,8 @@ int load_preset(
     float *sustain, float *release,
     int *wave_a, int *wave_b, int *wave_c, 
     bool *distortion, bool *overdrive, 
-    float *distortion_amount);
+    float *distortion_amount,
+    bool *loading_preset);
 
 /* Parse an ADSR XML Node whether it's basic ADSR of filter ADSR */
 int parse_adsr(

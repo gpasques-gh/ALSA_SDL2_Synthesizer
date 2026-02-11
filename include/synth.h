@@ -3,8 +3,6 @@
 
 #include <stdbool.h>
 
-#include "defs.h"
-
 /* ADSR envelope states */
 typedef enum
 {

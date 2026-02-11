@@ -3,32 +3,16 @@
 #include <libxml2/libxml/parser.h>
 #include <libxml2/libxml/tree.h>
 
+#include "defs.h"
 #include "interface.h"
 #include "synth.h"
-#include "xml.h"
+#include <raygui.h>
 
-/*
- * Renders the global informations and menus about the synthesizer :
- * - ADSR envelope sliders
- * - Filter ADSR envelope sliders
- * - Oscillator waveforms dropdown menus
- * - Filter cutoff and filter envelope ON/OFF
- * - Amplification and detune effect
- */
-void render_informations(
-    synth_t *synth,
-    float *attack, float *decay,
-    float *sustain, float *release,
-    int *wave_a, int *wave_b, int *wave_c,
-    bool *ddm_a, bool *ddm_b, bool *ddm_c,
-    char *preset_filename, char *audio_filename,
-    bool *saving_preset, bool *saving_audio_file, bool *recording,
-    bool *lfo_wave, bool *lfo_params,
-    bool *distortion, bool *overdrive,
-    float *distortion_amount)
+/* Render the ADSR envelope sliders */
+void render_adsr(
+    float *attack, float *decay, 
+    float *sustain, float *release)
 {
-    GuiLabel((Rectangle){WIDTH / 2 - 115, 5, 230, 20}, "ALSA & raygui Synthesizer");
-
     /* ADSR envelope sliders */
     GuiGroupBox((Rectangle){30, 40, 550, 160}, "ADSR Envelope");
     /* Attack */
@@ -47,7 +31,11 @@ void render_informations(
     GuiLabel((Rectangle){410, 120, 100, 20}, "Release");
     GuiSlider((Rectangle){320, 140, 225, 40}, NULL, NULL,
               release, 0.0f, 1.0f);
+}
 
+/* Render the filter ADSR envelope sliders */
+void render_filter_adsr(synth_t *synth)
+{
     /* Filter ADSR envelope sliders */
     GuiGroupBox((Rectangle){610, 40, 550, 160}, "Filter ADSR Envelope");
     /* Attack */
@@ -66,7 +54,13 @@ void render_informations(
     GuiLabel((Rectangle){990, 120, 100, 20}, "Release");
     GuiSlider((Rectangle){900, 140, 225, 40}, NULL, NULL,
               synth->filter->adsr->release, 0.0f, 1.0f);
+}
 
+/* Render the oscillators waveforms dropdown menus*/
+void render_osc_waveforms(
+    int *wave_a, int *wave_b, int *wave_c, 
+    bool *ddm_a, bool *ddm_b, bool *ddm_c)
+{
     /* Oscillators waveforms */
     GuiGroupBox((Rectangle){30, 230, 550, 160}, "Oscillators");
     /* Oscillator A */
@@ -87,7 +81,11 @@ void render_informations(
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
                        wave_c, *ddm_c))
         *ddm_c = !*ddm_c;
+}
 
+/* Render the synthesizer parameters */
+void render_synth_params(synth_t *synth)
+{
     /* Synth parameters */
     GuiGroupBox((Rectangle){610, 230, 550, 160}, "Synth parameters");
     /* Amplification */
@@ -112,33 +110,25 @@ void render_informations(
     /* Filter ADSR ON/OFF */
     GuiCheckBox((Rectangle){900, 330, 40, 40}, "Filter ADSR",
                 &synth->filter->env);
-    
-    /* Options */
+}
+
+void render_options(
+    char *audio_filename,
+    bool *saving_preset, bool *loading_preset,
+    bool *saving_audio_file, bool *recording)
+{
+     /* Options */
     GuiGroupBox((Rectangle){1190, 230, 554, 160}, "Options");
 
     /* Saving preset */
     if (GuiButton((Rectangle){1210, 240, 120, 40}, "Save preset"))
         *saving_preset = true;
 
-    if (*saving_preset)
-        save_preset(
-            synth,
-            attack, decay, sustain, release,
-            wave_a, wave_b, wave_c,
-            preset_filename, saving_preset, 
-            *distortion, *overdrive,
-            *distortion_amount);
-
     /* Loading preset */
     if (GuiButton((Rectangle){1210, 290, 120, 40}, "Load preset"))
-        load_preset(
-            synth,
-            attack, decay, sustain, release,
-            wave_a, wave_b, wave_c,
-            distortion, overdrive,
-            distortion_amount);
+        *loading_preset = true;
 
-    /* Recording audio */
+        /* Recording audio */
     int record_button = GuiButton((Rectangle){1210, 340, 120, 40}, "Record");
 
     if (record_button && !*recording)
@@ -161,7 +151,15 @@ void render_informations(
 
     if (*recording)
         DrawRectangleRounded((Rectangle){1340, 340, 5, 40}, 0.2, 10, RED);
-    
+}
+
+/* Render the effects parameters */
+void render_effects(
+    synth_t *synth, 
+    bool *lfo_wave_ddm, bool *lfo_params_ddm,
+    bool *distortion, bool *overdrive,
+    float *distortion_amount)
+{
     /* Effects */
     GuiGroupBox((Rectangle){1190, 40, 554, 160}, "Effects");
     /* LFO frequency */
@@ -172,14 +170,14 @@ void render_informations(
     GuiLabel((Rectangle){1210 + 130 / 2 - 80 / 2, 50, 80, 20}, "LFO wave");
     if (GuiDropdownBox((Rectangle){1210, 70, 130, 40},
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
-                       synth->lfo->osc->wave, *lfo_wave))
-        *lfo_wave = !*lfo_wave;
+                       synth->lfo->osc->wave, *lfo_wave_ddm))
+        *lfo_wave_ddm = !*lfo_wave_ddm;
     /* LFO modulated parameter */
     GuiLabel((Rectangle){1345 + 130 / 2 - 100 / 2, 50, 100, 20}, "LFO param");
     if (GuiDropdownBox((Rectangle){1345, 70, 130, 40},
                        "#01#Off;#02#Cutoff;#03#Detune;#04#Amp",
-                       &synth->lfo->mod_param, *lfo_params))
-        *lfo_params = !*lfo_params;
+                       &synth->lfo->mod_param, *lfo_params_ddm))
+        *lfo_params_ddm = !*lfo_params_ddm;
 
     /* Distortion */
     GuiLabel((Rectangle){1540 - 25, 50, 100, 20}, "Distortion");

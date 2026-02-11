@@ -1,6 +1,7 @@
 #include "defs.h"
 #include "effects.h"
 
+
 /* Applies an amount of distortion onto a sound buffer */
 void distortion(short *buffer, float amount, bool overdriving)
 {

@@ -1,7 +1,7 @@
 #ifndef RECORD_H
 #define RECORD_H
 
-#include "defs.h"
+#include <stdio.h>
 
 /* Wav header structure */
 typedef struct 

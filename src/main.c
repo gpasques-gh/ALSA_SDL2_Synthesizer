@@ -1,10 +1,7 @@
-#ifndef RAYGUI_IMPLEMENTATION
 #define RAYGUI_IMPLEMENTATION
-#endif 
-
+#include <raygui.h>
 #include <unistd.h>
 #include <alsa/asoundlib.h>
-
 
 #include "defs.h"
 #include "interface.h"
@@ -13,6 +10,7 @@
 #include "keyboard.h"
 #include "record.h"
 #include "effects.h"
+#include "xml.h"
 
 /* Prints the usage of the CLI arguments into the error output */
 void usage()
@@ -82,7 +80,7 @@ int main(int argc, char **argv)
     int octave = DEFAULT_OCTAVE;
 
     /* Oscillators waveforms */
-    int osc_a = SINE_WAVE, osc_b = SINE_WAVE, osc_c = SINE_WAVE;
+    int wave_a = SINE_WAVE, wave_b = SINE_WAVE, wave_c = SINE_WAVE;
     int osc_lfo = SINE_WAVE;
 
     /* Synthesizer ADSR envelope parameters*/
@@ -187,9 +185,9 @@ int main(int argc, char **argv)
         }
 
         /* Initializing oscillators wave pointers */
-        synth.voices[i].oscillators[0].wave = &osc_a;
-        synth.voices[i].oscillators[1].wave = &osc_b;
-        synth.voices[i].oscillators[2].wave = &osc_c;
+        synth.voices[i].oscillators[0].wave = &wave_a;
+        synth.voices[i].oscillators[1].wave = &wave_b;
+        synth.voices[i].oscillators[2].wave = &wave_c;
     }
 
     /* Open sound card */
@@ -243,9 +241,9 @@ int main(int argc, char **argv)
     /* Oscillators dropdown menus booleans */
     bool ddm_a = false, ddm_b = false, ddm_c = false;
     /* Saving name booleans to avoid triggering notes with keyboard */
-    bool saving_preset = false, saving_audio_file = false;
+    bool saving_preset = false, saving_audio_file = false, loading_preset = false;
     /* LFO dropdown menus booleans */
-    bool lfo_wave = false, lfo_params = false;
+    bool lfo_wave_ddm = false, lfo_params_ddm = false;
     /* Distortion variables*/
     bool distortion_on = false, overdrive = false;
     float distortion_amount = 0.0;
@@ -329,19 +327,52 @@ int main(int argc, char **argv)
         BeginDrawing();
             /* Clearing the background */
             ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+            /* Title */
+            GuiLabel((Rectangle){WIDTH / 2 - 115, 5, 230, 20}, "ALSA & raygui Synthesizer");
             /* Rendering the waveform visualizer */
             render_waveform(buffer);
-            /* Rendering the informations GUI */
-            render_informations(
+            /* Rendering the ADSR envelope sliders */
+            render_adsr(&attack, &decay, &sustain, &release);
+            /* Rendering the filter ADSR envelope sliders */
+            render_filter_adsr(&synth);
+            /* Rendering the oscillators waveforms dropdown menus */
+            render_osc_waveforms(
+                &wave_a, &wave_b, &wave_c,
+                &ddm_a, &ddm_b, &ddm_c);
+            /* Rendering the synth parameters */
+            render_synth_params(&synth);
+            /* Rendering the options */
+            render_options(
+                audio_filename,
+                &saving_preset, &loading_preset, 
+                &saving_audio_file, &recording);
+            /* Rendering the effects */
+            render_effects(
                 &synth,
-                &attack, &decay, &sustain, &release,
-                &osc_a, &osc_b, &osc_c,
-                &ddm_a, &ddm_b, &ddm_c,
-                preset_filename, audio_filename,
-                &saving_preset, &saving_audio_file, &recording,
-                &lfo_wave, &lfo_params,
+                &lfo_wave_ddm, &lfo_params_ddm,
                 &distortion_on, &overdrive,
                 &distortion_amount);
+
+            /* Loading the preset */
+            if (loading_preset)
+                load_preset(
+                    &synth,
+                    &attack, &decay, &sustain, &release,
+                    &wave_a, &wave_b, &wave_c,
+                    &distortion_on, &overdrive, 
+                    &distortion_amount, 
+                    &loading_preset);
+
+            /* Saving the preset */
+            if (saving_preset)
+                save_preset(
+                    synth,
+                    attack, decay, sustain, release,
+                    wave_a, wave_b, wave_c,
+                    preset_filename, &saving_preset, 
+                    distortion_on, overdrive,
+                    distortion_amount);
+
             /* We render the white keys and the pressed white keys before the black keys
             so that the black keys correctly overlap with the white keys */
             render_white_keys();

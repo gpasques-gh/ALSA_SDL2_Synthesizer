@@ -1,7 +1,9 @@
 #include <libxml2/libxml/parser.h>
 #include <libxml2/libxml/tree.h>
 
+#include "defs.h"
 #include "xml.h"
+#include <raygui.h>
 
 /*
  * Saving a preset into an XML file :
@@ -13,10 +15,10 @@
  * - Amplification
  */
 int save_preset(
-    synth_t *synth,
-    float *attack, float *decay,
-    float *sustain, float *release,
-    int *wave_a, int *wave_b, int *wave_c,
+    synth_t synth,
+    float attack, float decay,
+    float sustain, float release,
+    int wave_a, int wave_b, int wave_c,
     char *preset_filename, bool *saving_preset,
     bool distortion, bool overdrive, 
     float distortion_amount)
@@ -64,16 +66,16 @@ int save_preset(
         /* ADSR */
         adsr_node = xmlNewChild(root_node, NULL, BAD_CAST "adsr", NULL);
         /* Attack */
-        snprintf(text_element, 1024, "%.2f", *attack);
+        snprintf(text_element, 1024, "%.2f", attack);
         xmlNewChild(adsr_node, NULL, BAD_CAST "attack", BAD_CAST text_element);
         /* Decay */
-        snprintf(text_element, 1024, "%.2f", *decay);
+        snprintf(text_element, 1024, "%.2f", decay);
         xmlNewChild(adsr_node, NULL, BAD_CAST "decay", BAD_CAST text_element);
         /* Sustain */
-        snprintf(text_element, 1024, "%.2f", *sustain);
+        snprintf(text_element, 1024, "%.2f", sustain);
         xmlNewChild(adsr_node, NULL, BAD_CAST "sustain", BAD_CAST text_element);
         /* Release */
-        snprintf(text_element, 1024, "%.2f", *release);
+        snprintf(text_element, 1024, "%.2f", release);
         xmlNewChild(adsr_node, NULL, BAD_CAST "release", BAD_CAST text_element);
 
         /* Filter */
@@ -81,55 +83,55 @@ int save_preset(
         /* Filter ADSR */
         filter_adsr_node = xmlNewChild(filter_node, NULL, BAD_CAST "filter_adsr", NULL);
         /* Attack */
-        snprintf(text_element, 1024, "%.2f", *synth->filter->adsr->attack);
+        snprintf(text_element, 1024, "%.2f", *synth.filter->adsr->attack);
         xmlNewChild(filter_adsr_node, NULL, BAD_CAST "attack", BAD_CAST text_element);
         /* Decay */
-        snprintf(text_element, 1024, "%.2f", *synth->filter->adsr->decay);
+        snprintf(text_element, 1024, "%.2f", *synth.filter->adsr->decay);
         xmlNewChild(filter_adsr_node, NULL, BAD_CAST "decay", BAD_CAST text_element);
         /* Sustain */
-        snprintf(text_element, 1024, "%.2f", *synth->filter->adsr->sustain);
+        snprintf(text_element, 1024, "%.2f", *synth.filter->adsr->sustain);
         xmlNewChild(filter_adsr_node, NULL, BAD_CAST "sustain", BAD_CAST text_element);
         /* Release */
-        snprintf(text_element, 1024, "%.2f", *synth->filter->adsr->release);
+        snprintf(text_element, 1024, "%.2f", *synth.filter->adsr->release);
         xmlNewChild(filter_adsr_node, NULL, BAD_CAST "release", BAD_CAST text_element);
         /* Filter cutoff */
-        snprintf(text_element, 1024, "%.2f", synth->filter->cutoff);
+        snprintf(text_element, 1024, "%.2f", synth.filter->cutoff);
         xmlNewChild(filter_node, NULL, BAD_CAST "cutoff", BAD_CAST text_element);
         /* Filter envelope ON/OFF */
-        snprintf(text_element, 1024, "%d", synth->filter->env);
+        snprintf(text_element, 1024, "%d", synth.filter->env);
         xmlNewChild(filter_node, NULL, BAD_CAST "envelope_on", BAD_CAST text_element);
 
         /* Oscillators waveforms */
         osc_node = xmlNewChild(root_node, NULL, BAD_CAST "oscillators", NULL);
         /* Oscillator A */
-        snprintf(text_element, 1024, "%d", *wave_a);
+        snprintf(text_element, 1024, "%d", wave_a);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_a", BAD_CAST text_element);
         /* Oscillator B */
-        snprintf(text_element, 1024, "%d", *wave_b);
+        snprintf(text_element, 1024, "%d", wave_b);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_b", BAD_CAST text_element);
         /* Oscillator C */
-        snprintf(text_element, 1024, "%d", *wave_c);
+        snprintf(text_element, 1024, "%d", wave_c);
         xmlNewChild(osc_node, NULL, BAD_CAST "osc_c", BAD_CAST text_element);
 
         /* Effects */
         effects_node = xmlNewChild(root_node, NULL, BAD_CAST "effects", NULL);
         /* Detune */
-        snprintf(text_element, 1024, "%.2f", synth->detune);
+        snprintf(text_element, 1024, "%.2f", synth.detune);
         xmlNewChild(effects_node, NULL, BAD_CAST "detune", BAD_CAST text_element);
         /* Amplification */
-        snprintf(text_element, 1024, "%.2f", synth->amp);
+        snprintf(text_element, 1024, "%.2f", synth.amp);
         xmlNewChild(effects_node, NULL, BAD_CAST "amp", BAD_CAST text_element);
         
         /* LFO*/
         lfo_node = xmlNewChild(effects_node, NULL, BAD_CAST "lfo", NULL);
         /* LFO waveform */
-        snprintf(text_element, 1024, "%d", *synth->lfo->osc->wave);
+        snprintf(text_element, 1024, "%d", *synth.lfo->osc->wave);
         xmlNewChild(lfo_node, NULL, BAD_CAST "lfo_wave", BAD_CAST text_element);
         /* LFO frequency */
-        snprintf(text_element, 1024, "%.2f", synth->lfo->osc->freq);
+        snprintf(text_element, 1024, "%.2f", synth.lfo->osc->freq);
         xmlNewChild(lfo_node, NULL, BAD_CAST "lfo_freq", BAD_CAST text_element);
         /* LFO parameter */
-        snprintf(text_element, 1024, "%d", synth->lfo->mod_param);
+        snprintf(text_element, 1024, "%d", synth.lfo->mod_param);
         xmlNewChild(lfo_node, NULL, BAD_CAST "lfo_param", BAD_CAST text_element);
 
         /* Distortion */
@@ -168,7 +170,8 @@ int load_preset(
     float *sustain, float *release,
     int *wave_a, int *wave_b, int *wave_c,
     bool *distortion, bool *overdrive, 
-    float *distortion_amount)
+    float *distortion_amount, 
+    bool *loading_preset)
 {
     char filename[1024];
     const char *home = getenv("HOME");
@@ -190,6 +193,8 @@ int load_preset(
 
     /* Reading the XML file into the XML document pointer */
     doc = xmlReadFile(filename, NULL, 0);
+
+    *loading_preset = false;
 
     if (doc == NULL)
     {
