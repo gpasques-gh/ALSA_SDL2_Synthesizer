@@ -104,8 +104,9 @@ void render_informations(
         DrawRectangle(640, 330, 225 * (synth->filter->lfo_cutoff / 2), 40, GRAY);
     /* Detune effect */
     GuiLabel((Rectangle){990, 240, 100, 20}, "Detune");
-    GuiSlider((Rectangle){900, 260, 225, 40}, NULL, NULL,
-              &synth->detune, 0.0f, 1.0f);
+    if (GuiSlider((Rectangle){900, 260, 225, 40}, NULL, NULL,
+              &synth->detune, 0.0f, 1.0f))
+        apply_detune_change(synth);
     if (synth->lfo->mod_param == LFO_DETUNE)
         DrawRectangle(900, 260, 225 * synth->lfo_detune, 40, GRAY);
     /* Filter ADSR ON/OFF */
@@ -202,7 +203,7 @@ void render_waveform(short *buffer)
 
     /* Looping onto the frames of the buffer, 
     the i = 13 and FRAMES - 11 is because the waveform would go horizontally past the GuiGroupBox */
-    for (int i = 26; i < FRAMES - 22; i += step)
+    for (int i = 18; i < FRAMES - 15; i += step)
     {
         /* x coordinates */
         int x1 = (i * WIDTH) / FRAMES;
