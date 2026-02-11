@@ -32,6 +32,11 @@ The GUI shows all of the informations about the synth and let the user configure
 - Button for recording and stop recording into a WAV file
 - Piano keyboard showing which keys are being pressed
 
+
+\
+![alt text](https://github.com/gpasques-gh/ALSA_raygui_Synthesizer/blob/main/synth.png "GUI screenshot")
+
+
 # MIDI Input 🎹
 The MIDI input should work with all USB MIDI keyboards, to use the synth with your keyboard just follow these two steps :
 - Using the `amidi -l` command, get your MIDI device hardware id (should look something similar to `hw:1,0,0`)
