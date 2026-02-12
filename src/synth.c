@@ -122,7 +122,7 @@ void process_voices(synth_t *synth, double *tmp_buffer, int *active_voices)
         if ((synth->arp && v == synth->active_arp) || !synth->arp)
         {
             for (int i = 0; i < FRAMES; i++)
-            { /* Oscillators processing for each voice*/
+            {
                 float envelope = adsr_process(voice->adsr);
                 double mixed = 0.0;
 
@@ -227,8 +227,13 @@ void process_lfo(synth_t *synth)
 }
 
 /* Process the gain and low-pass filter onto the sound buffer */
-double process_gain(double sample, int active_voices)
+double process_gain(synth_t synth, double sample, int active_voices)
 {
+    /* No gain if arpeggio*/
+    if (synth.arp)
+    {
+        return sample;
+    }
     
      /* Gain to stay at the same level despite the number of active voices */
     double gain = (active_voices > 0)

@@ -251,7 +251,7 @@ int main(int argc, char **argv)
         {
             process_lfo(&synth);
             double sample = tmp_buffer[i];
-            sample = process_gain(sample, active_voices);
+            sample = process_gain(synth, sample, active_voices);
             sample = process_filter(&synth, sample);
             buffer[i] = (short)(sample * 32767.0);
             process_arpeggiator(&synth, &active_voices);

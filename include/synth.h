@@ -103,7 +103,7 @@ void process_voices(synth_t *synth, double *tmp_buffer, int *active_voices);
 void process_lfo(synth_t *synth);
 
 /* Process the gain and low-pass filter onto the sound buffer */
-double process_gain(double sample, int active_voices);
+double process_gain(synth_t synth, double sample, int active_voices);
 
 double process_filter(synth_t *synth, double sample);
 
