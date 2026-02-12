@@ -113,10 +113,10 @@ void render_synth_params(synth_t *synth)
 
 /* Render the options menu */
 void render_options(
+    synth_t *synth,
     char *audio_filename,
     bool *saving_preset, bool *loading_preset,
-    bool *saving_audio_file, bool *recording,
-    bool *arp, float *arp_bpm)
+    bool *saving_audio_file, bool *recording)
 {
      /* Options */
     GuiGroupBox((Rectangle){1190, 230, 554, 160}, "Options");
@@ -151,8 +151,15 @@ void render_options(
     if (*recording)
         DrawRectangleRounded((Rectangle){1340, 340, 5, 40}, 0.2, 10, RED);
 
-    GuiCheckBox((Rectangle){1350, 230, 40, 40}, "Arpeggiator", arp);
-    GuiSlider((Rectangle){1350, 280, 225, 40}, NULL, NULL, arp_bpm, 0.0, 250.0);
+    if (GuiCheckBox((Rectangle){1350, 230, 40, 40}, "Arpeggiator", &synth->arp))
+    {
+        for (int v = 0; v < VOICES; v++)
+        {
+            if (synth->voices[v].adsr->state == ENV_RELEASE)
+                synth->voices[v].active = 0;
+        }
+    }
+    GuiSlider((Rectangle){1350, 280, 225, 40}, NULL, NULL, &synth->bpm, 0.0, 250.0);
 }
 
 /* Render the effects parameters */

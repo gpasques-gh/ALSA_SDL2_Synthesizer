@@ -347,10 +347,10 @@ int main(int argc, char **argv)
             render_synth_params(&synth);
             /* Rendering the options */
             render_options(
+                &synth,
                 audio_filename,
                 &saving_preset, &loading_preset, 
-                &saving_audio_file, &recording,
-                &synth.arp, &synth.bpm);
+                &saving_audio_file, &recording);
             /* Rendering the effects */
             render_effects(
                 &synth,

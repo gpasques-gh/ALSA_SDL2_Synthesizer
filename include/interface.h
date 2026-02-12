@@ -26,10 +26,10 @@ void render_synth_params(synth_t *synth);
 
 /* Render the options menu */
 void render_options(
+    synth_t *synth,
     char *audio_filename,
     bool *saving_preset, bool *loading_preset,
-    bool *saving_audio_file, bool *recording, 
-    bool *arp, float *arp_bpm);
+    bool *saving_audio_file, bool *recording);
 
 /* Render the effects parameters */
 void render_effects(

@@ -178,6 +178,15 @@ void render_synth(synth_t *synth, short *buffer)
 
         }
 
+        if (voice->adsr->state == ENV_IDLE && !synth->arp)
+        {
+            voice->active = 0;
+            voice->note = 0;
+            active_voices--;
+            if (active_voices < 0)
+                active_voices = 0;
+        }
+            
         
     }
 
@@ -282,11 +291,8 @@ void render_synth(synth_t *synth, short *buffer)
                     synth->filter->adsr->state = ENV_ATTACK;
                 
                 /* Reseting ADSR envelope when sustain is 0.0 */
-                if (synth->voices[synth->active_arp].adsr->state == ENV_RELEASE ||
-                    synth->voices[synth->active_arp].adsr->state == ENV_IDLE)
-                {
-                    synth->voices[synth->active_arp].adsr->state = ENV_ATTACK;
-                }
+                synth->voices[synth->active_arp].adsr->state = ENV_ATTACK;
+                
                     
                 //fprintf(stderr, "active arp: %d\n", synth->active_arp);
                 //fprintf(stderr, "active voices: %d\n", active_voices);

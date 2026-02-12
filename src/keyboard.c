@@ -162,8 +162,9 @@ void release_note(synth_t *synth, int midi_note)
                 /* Cut the release out when key is released */
                 synth->voices[v].adsr->state = ENV_IDLE;
                 synth->voices[v].active = 0;
+                synth->voices[v].note = 0;
             }
-            else
+            else if (!synth->arp && synth->voices[v].adsr->state != ENV_RELEASE)
                 synth->voices[v].adsr->state = ENV_RELEASE;
             break; /* Two voices can't have the same note, we can break */
         }
