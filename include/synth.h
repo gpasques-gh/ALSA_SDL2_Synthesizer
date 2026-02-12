@@ -59,7 +59,6 @@ typedef struct
 {
     osc_t *oscillators;
     adsr_t *adsr;
-    int active;
     int pressed;
     int note;
     double velocity_amp;
@@ -70,6 +69,10 @@ typedef struct
  * Voices is an array of voice_t
  * Detune is between 0.0 and 1.0
  * Amplification is between 0.0 and 1.0
+ * The LFO variables are used when the LFO is modulating the base variable
+ * The active_arp variable is the index of the current active voice from the arpeggio
+ * The active_arp_float is a number between 0 and 1 
+ * used to move from beat to beat on the arpeggio
  */
 typedef struct
 {
@@ -92,7 +95,13 @@ typedef struct
  */
 float adsr_process(adsr_t *adsr);
 
-/* Renders the synth_t voices into the temporary sound buffer */
+/**
+ * Renders the synth_t voices into the temporary sound buffer
+ * Each voice's ADSR envelope is processed during this rendering
+ * Applies the low-pass filter and the amplification onto the buffer 
+ * Process the LFO modulation after rendering the buffer
+ * Process the arpeggiator
+ */
 void render_synth(synth_t *synth, short *buffer);
 
 /*
@@ -112,8 +121,7 @@ const char *get_wave_name(int wave);
  * Process a sample with the low-pass filter
  * Returns the processed sample
  */
-double
-lp_process(lp_filter_t *filter, double input,
+double lp_process(lp_filter_t *filter, double input,
            float cutoff);
 
 /*
@@ -122,7 +130,7 @@ lp_process(lp_filter_t *filter, double input,
  */
 voice_t *get_free_voice(synth_t *synth);
 
-/* Insertion sort algorithm for the voices of a synth_t, used for arpeggiator */
+/* Insertion sort algorithm for the voices of a synth_t, used for the arpeggiator */
 void sort_synth_voices(synth_t *synth);
 
 #endif

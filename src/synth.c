@@ -106,7 +106,13 @@ float adsr_process(adsr_t *adsr)
     return adsr->output;
 }
 
-/* Renders the synth_t voices into the temporary sound buffer */
+/*
+ * Renders the synth_t voices into the temporary sound buffer
+ * Each voice's ADSR envelope is processed during this rendering
+ * Applies the low-pass filter and the amplification onto the buffer 
+ * Process the LFO modulation after rendering the buffer
+ * Process the arpeggiator
+ */
 void render_synth(synth_t *synth, short *buffer)
 {
     double temp_buffer[FRAMES];
@@ -305,7 +311,6 @@ void change_freq(voice_t *voice, int note,
 
     /* Activating the voice */
     voice->note = note;
-    voice->active = 1;
     voice->adsr->output = 0.001;
     voice->adsr->state = ENV_ATTACK;
     voice->velocity_amp = velocity / MIDI_MAX_VALUE;
@@ -355,12 +360,11 @@ const char *get_wave_name(int wave)
 }
 
 /*
- * Process a sample with the low-pass filter
+ * Process a sample with the low-pass filter and the given cutoff
  * Returns the processed sample
  */
-double
-lp_process(lp_filter_t *filter, double input,
-           float cutoff)
+double lp_process(lp_filter_t *filter, double input,
+                float cutoff)
 {
     /* Clipping */
     if (cutoff > 1.0f)

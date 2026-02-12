@@ -171,7 +171,6 @@ int main(int argc, char **argv)
         /* Note and activation */
         synth.voices[i].note = -1;
         synth.voices[i].velocity_amp = 0.0;
-        synth.voices[i].active = 0;
         synth.voices[i].pressed = 0;
 
         /* Allocate oscillators */

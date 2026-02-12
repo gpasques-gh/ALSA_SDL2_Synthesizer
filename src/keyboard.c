@@ -53,7 +53,7 @@ void handle_input(synth_t *synth, int layout, int *octave)
         don't get stucked when sustain is not at 0.0 */
         for (int v = 0; v < VOICES; v++)
         {
-            synth->voices[v].adsr->state = ENV_RELEASE;
+            synth->voices[v].adsr->state = ENV_IDLE;
             synth->voices[v].pressed = 0;
             synth->voices[v].note = -1;
         }
@@ -65,7 +65,7 @@ void handle_input(synth_t *synth, int layout, int *octave)
         don't get stucked when sustain is not at 0.0 */
         for (int v = 0; v < VOICES; v++)
         {
-            synth->voices[v].adsr->state = ENV_RELEASE;
+            synth->voices[v].adsr->state = ENV_IDLE;
             synth->voices[v].pressed = 0;
             synth->voices[v].note = -1;
         }

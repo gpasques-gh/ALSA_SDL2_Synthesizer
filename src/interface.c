@@ -156,7 +156,7 @@ void render_options(
         for (int v = 0; v < VOICES; v++)
         {
             if (synth->voices[v].adsr->state == ENV_RELEASE)
-                synth->voices[v].active = 0;
+                synth->voices[v].pressed = 0;
         }
     }
     GuiSlider((Rectangle){1350, 280, 225, 40}, NULL, NULL, &synth->bpm, 0.0, 250.0);
@@ -273,7 +273,8 @@ void render_black_keys()
     }
 }
 
-/* Renders given note into a pressed key in the MIDI piano visualizer */
+/* Renders given note into a pressed key in the MIDI piano visualizer 
+Render the key in a different color if it's the current arpeggio key */
 void render_key(int midi_note, bool arp)
 {
     if (midi_note < 0)

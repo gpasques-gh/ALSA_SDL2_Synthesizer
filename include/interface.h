@@ -47,7 +47,8 @@ void render_white_keys();
 /* Render the black keys from the MIDI piano visualizer */
 void render_black_keys();
 
-/* Renders given note into a pressed key in the MIDI piano visualizer */
+/* Renders given note into a pressed key in the MIDI piano visualizer 
+Render the key in a different color if it's the current arpeggio key */
 void render_key(int midi_note, bool arp);
 
 /* Outputs a given MIDI note rectangle parameters (x, y, width and height) */
