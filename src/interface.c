@@ -14,19 +14,19 @@ void render_adsr(
 {
     /* ADSR envelope sliders */
     GuiGroupBox((Rectangle){30, 40, 550, 160}, "ADSR Envelope");
-    /* Attack */
+
     GuiLabel((Rectangle){150, 50, 100, 20}, "Attack");
     GuiSlider((Rectangle){60, 70, 225, 40}, NULL, NULL,
               attack, 0.0f, 2.0f);
-    /* Decay */
+
     GuiLabel((Rectangle){150, 120, 100, 20}, "Decay");
     GuiSlider((Rectangle){60, 140, 225, 40}, NULL, NULL,
               decay, 0.0f, 2.0f);
-    /* Sustain */
+
     GuiLabel((Rectangle){410, 50, 100, 20}, "Sustain");
     GuiSlider((Rectangle){320, 70, 225, 40}, NULL, NULL,
               sustain, 0.0f, 1.0f);
-    /* Release */
+
     GuiLabel((Rectangle){410, 120, 100, 20}, "Release");
     GuiSlider((Rectangle){320, 140, 225, 40}, NULL, NULL,
               release, 0.0f, 1.0f);
@@ -37,19 +37,19 @@ void render_filter_adsr(synth_t *synth)
 {
     /* Filter ADSR envelope sliders */
     GuiGroupBox((Rectangle){610, 40, 550, 160}, "Filter ADSR Envelope");
-    /* Attack */
+
     GuiLabel((Rectangle){730, 50, 100, 20}, "Attack");
     GuiSlider((Rectangle){640, 70, 225, 40}, NULL, NULL,
               synth->filter->adsr->attack, 0.0f, 2.0f);
-    /* Decay */
+
     GuiLabel((Rectangle){730, 120, 100, 20}, "Decay");
     GuiSlider((Rectangle){640, 140, 225, 40}, NULL, NULL,
               synth->filter->adsr->decay, 0.0f, 2.0f);
-    /* Sustain */
+
     GuiLabel((Rectangle){990, 50, 100, 20}, "Sustain");
     GuiSlider((Rectangle){900, 70, 225, 40}, NULL, NULL,
               synth->filter->adsr->sustain, 0.0f, 1.0f);
-    /* Release */
+
     GuiLabel((Rectangle){990, 120, 100, 20}, "Release");
     GuiSlider((Rectangle){900, 140, 225, 40}, NULL, NULL,
               synth->filter->adsr->release, 0.0f, 1.0f);
@@ -62,19 +62,19 @@ void render_osc_waveforms(
 {
     /* Oscillators waveforms */
     GuiGroupBox((Rectangle){30, 230, 550, 160}, "Oscillators");
-    /* Oscillator A */
+
     GuiLabel((Rectangle){80, 265, 110, 20}, "Oscillator A");
     if (GuiDropdownBox((Rectangle){60, 285, 140, 40},
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
                        wave_a, *ddm_a))
         *ddm_a = !*ddm_a;
-    /* Oscillator B */
+
     GuiLabel((Rectangle){250, 265, 110, 20}, "Oscillator B");
     if (GuiDropdownBox((Rectangle){230, 285, 140, 40},
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
                        wave_b, *ddm_b))
         *ddm_b = !*ddm_b;
-    /* Oscillator C */
+
     GuiLabel((Rectangle){420, 265, 110, 20}, "Oscillator C");
     if (GuiDropdownBox((Rectangle){400, 285, 140, 40},
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
@@ -87,26 +87,26 @@ void render_synth_params(synth_t *synth)
 {
     /* Synth parameters */
     GuiGroupBox((Rectangle){610, 230, 550, 160}, "Synth parameters");
-    /* Amplification */
+
     GuiLabel((Rectangle){730, 240, 100, 20}, "Amp");
     GuiSlider((Rectangle){640, 260, 225, 40}, NULL, NULL,
               &synth->amp, 0.0f, 1.0f);
     if (synth->lfo->mod_param == LFO_AMP)
         DrawRectangle(640, 260, 225 * synth->lfo_amp, 40, GRAY);
-    /* Filter cutoff */
+
     GuiLabel((Rectangle){730, 310, 100, 20}, "Cutoff");
     GuiSlider((Rectangle){640, 330, 225, 40}, NULL, NULL,
               &synth->filter->cutoff, 0.0f, 2.0f);
     if (synth->lfo->mod_param == LFO_CUTOFF)
         DrawRectangle(640, 330, 225 * (synth->filter->lfo_cutoff / 2), 40, GRAY);
-    /* Detune effect */
+
     GuiLabel((Rectangle){990, 240, 100, 20}, "Detune");
     if (GuiSlider((Rectangle){900, 260, 225, 40}, NULL, NULL,
               &synth->detune, 0.0f, 1.0f))
         apply_detune_change(synth);
     if (synth->lfo->mod_param == LFO_DETUNE)
         DrawRectangle(900, 260, 225 * synth->lfo_detune, 40, GRAY);
-    /* Filter ADSR ON/OFF */
+
     GuiCheckBox((Rectangle){900, 330, 40, 40}, "Filter ADSR",
                 &synth->filter->env);
 }
@@ -120,21 +120,21 @@ void render_options(
 {
      /* Options */
     GuiGroupBox((Rectangle){1190, 230, 554, 160}, "Options");
-    /* Saving preset */
+
     if (GuiButton((Rectangle){1210, 240, 120, 40}, "Save preset"))
         *saving_preset = true;
-    /* Loading preset */
+
     if (GuiButton((Rectangle){1210, 290, 120, 40}, "Load preset"))
         *loading_preset = true;
-    /* Recording audio */
+
     int record_button = GuiButton((Rectangle){1210, 340, 120, 40}, "Record");
-    /* If we pressed the record button for the first time */
+
     if (record_button && !*recording)
         *saving_audio_file = true;
-    /* Else we stop recording */
+
     else if (record_button && *recording)
         *recording = false;
-    /* Saving audio filename*/
+
     if (*saving_audio_file)
     {
         int res = GuiTextInputBox((Rectangle){WIDTH / 2 - 100, HEIGHT / 2 - 50, 200, 100},
@@ -147,6 +147,7 @@ void render_options(
             *saving_audio_file = false;
         }
     }
+
     /* Drawing a little rectangle that shows we are recording */
     if (*recording)
         DrawRectangleRounded((Rectangle){1340, 340, 5, 40}, 0.2, 10, RED);
@@ -171,17 +172,17 @@ void render_effects(
 {
     /* Effects */
     GuiGroupBox((Rectangle){1190, 40, 554, 160}, "Effects");
-    /* LFO frequency */
+
     GuiLabel((Rectangle){1210 + 265 / 2 - 120 / 2, 120, 120, 20}, "LFO frequency");
     GuiSlider((Rectangle){1210, 140, 265, 40}, NULL, NULL,
               &synth->lfo->osc->freq, 0.0f, 1.0f);
-    /* LFO waveform */
+
     GuiLabel((Rectangle){1210 + 130 / 2 - 80 / 2, 50, 80, 20}, "LFO wave");
     if (GuiDropdownBox((Rectangle){1210, 70, 130, 40},
                        "#01#Sine;#02#Square;#03#Triangle;#04#Sawtooth",
                        synth->lfo->osc->wave, *lfo_wave_ddm))
         *lfo_wave_ddm = !*lfo_wave_ddm;
-    /* LFO modulated parameter */
+
     GuiLabel((Rectangle){1345 + 130 / 2 - 100 / 2, 50, 100, 20}, "LFO param");
     if (GuiDropdownBox((Rectangle){1345, 70, 130, 40},
                        "#01#Off;#02#Cutoff;#03#Detune;#04#Amp",
@@ -191,8 +192,10 @@ void render_effects(
     /* Distortion */
     GuiLabel((Rectangle){1540 - 25, 50, 100, 20}, "Distortion");
     GuiCheckBox((Rectangle){1540, 70, 40, 40}, NULL, distortion);
+
     GuiLabel((Rectangle){1650 - 25, 50, 100, 20}, "Overdrive");
     GuiCheckBox((Rectangle){1650, 70, 40, 40}, NULL, overdrive);
+
     GuiLabel((Rectangle){1500 + 225 / 2 - 160 / 2, 120, 160, 20}, "Distortion amount");
     GuiSlider((Rectangle){1500, 140, 225, 40}, NULL, NULL,
               distortion_amount, 0.0f, 1.0f);
@@ -209,13 +212,13 @@ void render_waveform(short *buffer)
     int step = 1;
 
     /* Looping onto the frames of the buffer, 
-    the i = 13 and FRAMES - 11 is because the waveform would go horizontally past the GuiGroupBox */
+    the i = 18 and FRAMES - 15 is because the waveform would go horizontally past the GuiGroupBox */
     for (int i = 18; i < FRAMES - 15; i += step)
     {
-        /* x coordinates */
+
         int x1 = (i * WIDTH) / FRAMES;
         int x2 = ((i + step) * WIDTH) / FRAMES;
-        /* y coordinates */
+
         int y1 = y - ((buffer[i] * mid_y) / 32768);
         int y2 = y - ((buffer[i + step] * mid_y) / 32768);
 
@@ -229,7 +232,6 @@ void render_waveform(short *buffer)
         if (y2 > 580)
             y2 = 580;
 
-        /* Drawing the line */
         DrawLine(x1, y1, x2, y2, BLACK);
     }
 }
@@ -237,12 +239,9 @@ void render_waveform(short *buffer)
 /* Render the white keys from the MIDI piano visualizer */
 void render_white_keys()
 {
-    /* Drawing all of white keys */
     for (int i = 0; i < WHITE_KEYS; i++)
-    {
         DrawRectangleLines(i * WHITE_KEYS_WIDTH, HEIGHT - WHITE_KEYS_HEIGHT,
                            WHITE_KEYS_WIDTH + 1, WHITE_KEYS_HEIGHT, BLACK);
-    }
 }
 
 /* Render the black keys from the MIDI piano visualizer */
@@ -250,16 +249,13 @@ void render_black_keys()
 {
     char black_keys_pattern[] = {1, 1, 0, 1, 1, 1, 0, 0};
     int white_key_index = 0;
-    /* Going from octave to octave */
+
     for (int octave = 0; octave <= (WHITE_KEYS / 7); octave++)
     {
-        /* Drawing all the black keys from the octave */
         for (int i = 0; i < 7; i++)
         {
-            /* If the index is a black key from the black key pattern */
             if (black_keys_pattern[i])
             {
-                /* Draw the black key */
                 int x = (white_key_index * WHITE_KEYS_WIDTH) + WHITE_KEYS_WIDTH - (BLACK_KEYS_WIDTH / 2);
                 DrawRectangle(x, HEIGHT - WHITE_KEYS_HEIGHT,
                               BLACK_KEYS_WIDTH, BLACK_KEYS_HEIGHT, BLACK);
@@ -279,16 +275,17 @@ void render_key(int midi_note, bool arp)
 {
     if (midi_note < 0)
         return;
-    /* Getting the key position from the MIDI note */
+
     int width = 0, height = 0, x = 0, y = 0, is_black = 0;
     get_key_position(midi_note, &x, &y, &width, &height, &is_black);
-    /* Draw the pressed key onto the keyboard */
+
     if (arp)
         DrawRectangle(x, y, width, height, SKYBLUE);
     else
         DrawRectangle(x, y, width, height, (Color){151, 232, 255, 255});
-    /* Drawing black lines around it */
+
     DrawRectangleLines(x, y, width, height, BLACK);
+
     /* Avoid double thick line when pressing a white key */
     if (!is_black)
     {
@@ -304,21 +301,17 @@ void render_key(int midi_note, bool arp)
 void get_key_position(int midi_note, int *x, int *y,
                       int *width, int *height, int *is_black)
 {
-    /* The octave of the note and its place within that octave */
     int note_in_octave = midi_note % 12;
     int octave = midi_note / 12;
 
-    /* Black key map */
     static const int black_keys[] = {0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0};
     *is_black = black_keys[note_in_octave];
 
-    /* White key map  */
     static const int white_key_map[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
     int white_key_in_octave = white_key_map[note_in_octave];
 
     int white_key_index = (octave * 7) + white_key_in_octave;
 
-    /* Black key rectangle */
     if (*is_black)
     {
         *width = WHITE_KEYS_WIDTH / 2;
@@ -326,7 +319,6 @@ void get_key_position(int midi_note, int *x, int *y,
         *x = (white_key_index * WHITE_KEYS_WIDTH) + WHITE_KEYS_WIDTH - (*width / 2);
         *y = HEIGHT - WHITE_KEYS_HEIGHT;
     }
-    /* White key rectangle */
     else
     {
         *width = WHITE_KEYS_WIDTH;

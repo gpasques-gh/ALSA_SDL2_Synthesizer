@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "effects.h"
 
-
 /* Applies an amount of distortion onto a sound buffer */
 void distortion(short *buffer, float amount, bool overdriving)
 {
@@ -12,13 +11,11 @@ void distortion(short *buffer, float amount, bool overdriving)
 
     short clip;
     
-    /* Calculating the clip */
     if (overdriving)
         clip = (32767 / 2) *  (1 - amount);
     else 
         clip = 32767 *  (1 - amount);
 
-    /* Apply the distortion onto the buffer */
     for (int i = 0; i < FRAMES; i++)
     {
         if (buffer[i] > clip)

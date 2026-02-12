@@ -95,14 +95,20 @@ typedef struct
  */
 float adsr_process(adsr_t *adsr);
 
-/**
- * Renders the synth_t voices into the temporary sound buffer
- * Each voice's ADSR envelope is processed during this rendering
- * Applies the low-pass filter and the amplification onto the buffer 
- * Process the LFO modulation after rendering the buffer
- * Process the arpeggiator
- */
-void render_synth(synth_t *synth, short *buffer);
+
+/* Process the synth voices into the sound buffer */
+void process_voices(synth_t *synth, double *tmp_buffer, int *active_voices);
+
+/* Process the LFO modulation */
+void process_lfo(synth_t *synth);
+
+/* Process the gain and low-pass filter onto the sound buffer */
+double process_gain(double sample, int active_voices);
+
+double process_filter(synth_t *synth, double sample);
+
+/* Process the arpeggiator */
+void process_arpeggiator(synth_t *synth, int *active_voices);
 
 /*
  * Change the frequency of a voice_t oscillators with the given MIDI note and velocity
@@ -118,11 +124,11 @@ void apply_detune_change(synth_t *synth);
 const char *get_wave_name(int wave);
 
 /*
- * Process a sample with the low-pass filter
+ * Process a sample with the low-pass filter and the given cutoff
  * Returns the processed sample
  */
 double lp_process(lp_filter_t *filter, double input,
-           float cutoff);
+                float cutoff);
 
 /*
  * Returns the first free voice from the synth_t

@@ -106,26 +106,18 @@ float adsr_process(adsr_t *adsr)
     return adsr->output;
 }
 
-/*
- * Renders the synth_t voices into the temporary sound buffer
- * Each voice's ADSR envelope is processed during this rendering
- * Applies the low-pass filter and the amplification onto the buffer 
- * Process the LFO modulation after rendering the buffer
- * Process the arpeggiator
- */
-void render_synth(synth_t *synth, short *buffer)
-{
-    double temp_buffer[FRAMES];
-    memset(temp_buffer, 0, FRAMES * sizeof(double));
 
-    int active_voices = 0;
+/* Process the synth voices into the sound buffer */
+void process_voices(synth_t *synth, double *tmp_buffer, int *active_voices)
+{
+    *active_voices = 0;
 
     for (int v = 0; v < VOICES; v++)
     {
         voice_t *voice = &synth->voices[v];
         if (voice->adsr->state == ENV_IDLE)
             continue;
-        active_voices++;
+        (*active_voices)++;
 
         if ((synth->arp && v == synth->active_arp) || !synth->arp)
         {
@@ -176,126 +168,134 @@ void render_synth(synth_t *synth, short *buffer)
                 else
                     mixed *= synth->amp;
 
-                temp_buffer[i] += mixed;
+                tmp_buffer[i] += mixed;
             }
         }
     }
+}
 
-    /* Gain to stay at the same level despite the number of active voices */
+/* Process the LFO modulation */
+void process_lfo(synth_t *synth)
+{
+    if (synth->lfo->mod_param != LFO_OFF)
+    {
+        /* Processing the LFO */
+        double phase_inc = synth->lfo->osc->freq / RATE;
+        double automation;
+        
+        /* Calculating the wave from the LFO */
+        switch (*synth->lfo->osc->wave)
+        {
+        case SINE_WAVE:
+            automation = fabs(sin(2.0 * M_PI * synth->lfo->osc->phase));
+            break;
+        case SQUARE_WAVE:
+            automation = (synth->lfo->osc->phase < 0.5) ? 1.0 : 0.0;
+            break;
+        case TRIANGLE_WAVE:
+            automation = fabs(1.0 - 4.0 * fabs(synth->lfo->osc->phase - 0.5));
+            break;
+        case SAWTOOTH_WAVE:
+            automation = synth->lfo->osc->phase;
+            break;
+        default:
+            automation = 0.0;
+            break;
+        }
+
+        /* Applyging the LFO to the assigned parameter */
+        switch (synth->lfo->mod_param)
+        {
+        case LFO_CUTOFF:
+            synth->filter->lfo_cutoff = synth->filter->cutoff * automation;
+            break;
+        case LFO_DETUNE:
+            synth->lfo_detune = synth->detune * automation;
+            apply_detune_change(synth);
+            break;
+        case LFO_AMP:
+            synth->lfo_amp = synth->amp * automation;
+            break;
+        default:
+            break;
+        }
+
+        synth->lfo->osc->phase += phase_inc;
+        if (synth->lfo->osc->phase >= 1.0)
+            synth->lfo->osc->phase -= 1.0;
+    }
+}
+
+/* Process the gain and low-pass filter onto the sound buffer */
+double process_gain(double sample, int active_voices)
+{
+    
+     /* Gain to stay at the same level despite the number of active voices */
     double gain = (active_voices > 0)
                       ? 1.0 / sqrt((double)active_voices)
                       : 0.0;
 
-    /* Post oscillator processing */
-    for (int i = 0; i < FRAMES; i++)
-    { /* Low-pass filter and gain processing */
+    /* Gain processing */
+    double processed_sample = sample * gain;
+    if (processed_sample > 1.0)
+        processed_sample = 1.0;
+    if (processed_sample < -1.0)
+        processed_sample = -1.0;
 
-        if (synth->lfo->mod_param != LFO_OFF)
+    return processed_sample;
+}
+
+double process_filter(synth_t *synth, double sample)
+{
+    /* Filter processing */
+    double cutoff = synth->filter->cutoff;
+    /* Filter envelope processing */
+    if (synth->filter->env)
+    {
+        cutoff = synth->filter->cutoff +
+                        adsr_process(synth->filter->adsr) / 2;
+        if (cutoff > 1.0)
+            cutoff = 1.0;
+        synth->filter->env_cutoff = cutoff;
+    }
+    /* If the LFO is on the filter, override the filter envelope */
+    if (synth->lfo->mod_param == LFO_CUTOFF)
+        cutoff = synth->filter->lfo_cutoff;
+    /* Process the filter */
+    return lp_process(synth->filter, sample, cutoff);
+}
+
+/* Process the arpeggiator */
+void process_arpeggiator(synth_t *synth, int *active_voices)
+{   /* Handling arpeggiator */
+    if (synth->arp)
+    {
+        /* BPM management */
+        float bpm_increment = 1.0 / (60.0 / (float)synth->bpm * RATE);
+        synth->active_arp_float += bpm_increment;
+
+        /* If we moved one beat */
+        if (synth->active_arp_float >= 1.0)
         {
-            /* Processing the LFO */
-            double phase_inc = synth->lfo->osc->freq / RATE;
-            double automation;
+            /* We move to the next voice */
+            synth->active_arp++;
+            /* If we have gone too far */
+            if (synth->active_arp >= *active_voices)
+                synth->active_arp = 0;
+            /* Reseting the beat counter */
+            synth->active_arp_float = 0.0;
+            /* Reseting the filter envelope if it's on */
             
-            /* Calculating the wave from the LFO */
-            switch (*synth->lfo->osc->wave)
+            /* Reseting ADSR envelope */
+            if (synth->voices[synth->active_arp].pressed)
             {
-            case SINE_WAVE:
-                automation = fabs(sin(2.0 * M_PI * synth->lfo->osc->phase));
-                break;
-            case SQUARE_WAVE:
-                automation = (synth->lfo->osc->phase < 0.5) ? 1.0 : 0.0;
-                break;
-            case TRIANGLE_WAVE:
-                automation = fabs(1.0 - 4.0 * fabs(synth->lfo->osc->phase - 0.5));
-                break;
-            case SAWTOOTH_WAVE:
-                automation = synth->lfo->osc->phase;
-                break;
-            default:
-                automation = 0.0;
-                break;
+                synth->voices[synth->active_arp].adsr->state = ENV_ATTACK;
+                if (synth->filter->env)
+                    synth->filter->adsr->state = ENV_ATTACK;
             }
-
-            /* Applyging the LFO to the assigned parameter */
-            switch (synth->lfo->mod_param)
-            {
-            case LFO_CUTOFF:
-                synth->filter->lfo_cutoff = synth->filter->cutoff * automation;
-                break;
-            case LFO_DETUNE:
-                synth->lfo_detune = synth->detune * automation;
-                apply_detune_change(synth);
-                break;
-            case LFO_AMP:
-                synth->lfo_amp = synth->amp * automation;
-                break;
-            default:
-                break;
-            }
-
-            synth->lfo->osc->phase += phase_inc;
-            if (synth->lfo->osc->phase >= 1.0)
-                synth->lfo->osc->phase -= 1.0;
-        }
-
-        /* Gain processing */
-        double sample = temp_buffer[i] * gain;
-        if (sample > 1.0)
-            sample = 1.0;
-        if (sample < -1.0)
-            sample = -1.0;
-
-        /* Filter processing */
-        double cutoff = synth->filter->cutoff;
-        /* Filter envelope processing */
-        if (synth->filter->env)
-        {
-            cutoff = synth->filter->cutoff +
-                         adsr_process(synth->filter->adsr) / 2;
-            if (cutoff > 1.0)
-                cutoff = 1.0;
-            synth->filter->env_cutoff = cutoff;
-        }
-        /* If the LFO is on the filter, override the filter envelope */
-        if (synth->lfo->mod_param == LFO_CUTOFF)
-            cutoff = synth->filter->lfo_cutoff;
-        /* Process the filter */
-        sample = lp_process(synth->filter, sample, cutoff);
-        /* Finalized sample */
-        buffer[i] = (short)(sample * 32767.0);
-
-        /* Handling arpeggiator */
-        if (synth->arp)
-        {
-            /* BPM management */
-            float bpm_increment = 1.0 / (60.0 / (float)synth->bpm * RATE);
-            synth->active_arp_float += bpm_increment;
-
-            /* If we moved one beat */
-            if (synth->active_arp_float >= 1.0)
-            {
-                /* We move to the next voice */
-                synth->active_arp++;
-                /* If we have gone too far */
-                if (synth->active_arp >= active_voices)
-                    synth->active_arp = 0;
-                /* Reseting the beat counter */
-                synth->active_arp_float = 0.0;
-                /* Reseting the filter envelope if it's on */
-                
-                /* Reseting ADSR envelope */
-                if (synth->voices[synth->active_arp].pressed)
-                {
-                    synth->voices[synth->active_arp].adsr->state = ENV_ATTACK;
-                    if (synth->filter->env)
-                        synth->filter->adsr->state = ENV_ATTACK;
-                }
-
-
-                fprintf(stderr, "\nfirst note %d\n", synth->voices[0].note);
-                fprintf(stderr, "active voices %d\n", active_voices);
-                fprintf(stderr, "active arp %d\n", synth->active_arp);
-            }
+            //fprintf(stderr, "\nfirst note %d\n", synth->voices[0].note);
+            //fprintf(stderr, "active voices %d\n", active_voices);
+            //fprintf(stderr, "active arp %d\n", synth->active_arp);
         }
     }
 }
