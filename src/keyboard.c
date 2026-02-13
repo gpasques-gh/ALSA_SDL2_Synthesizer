@@ -9,22 +9,14 @@
  * Change the cutoff, detune and amplification when the assigned keys are being pressed
  * Change the keyboard octave when UP or DOWN keys are being pressed
  */
-void handle_input(synth_t *synth, int layout, int *octave)
+void handle_input(synth_t *synth, int *octave)
 {
     int octave_length = *octave * 12;
 
-    if (IsKeyPressed(kC_QWERTY))
-        if (layout == QWERTY)
-            assign_note(synth, octave_length + nC);
-    if (IsKeyPressed(kC_AZERTY))
-        if (layout == AZERTY)
-            assign_note(synth, octave_length + nC);
-    if (IsKeyPressed(kC_SHARP_QWERTY))
-        if (layout == QWERTY)
-            assign_note(synth, octave_length + nC_SHARP);
-    if (IsKeyPressed(kC_SHARP_AZERTY))
-        if (layout == AZERTY)
-            assign_note(synth, octave_length + nC_SHARP);
+    if (IsKeyPressed(kC))
+        assign_note(synth, octave_length + nC);
+    if (IsKeyPressed(kC_SHARP))
+        assign_note(synth, octave_length + nC_SHARP);
     if (IsKeyPressed(kD))
         assign_note(synth, octave_length + nD);
     if (IsKeyPressed(kD_SHARP))
@@ -73,22 +65,14 @@ void handle_input(synth_t *synth, int layout, int *octave)
 }
 
 /* Free the synth voices when their assigned note key are being released */
-void handle_release(synth_t *synth, int layout, int octave)
+void handle_release(synth_t *synth, int octave)
 {
     int octave_length = octave * 12;
     
-    if (IsKeyReleased(kC_QWERTY))
-        if (layout == QWERTY)
-            release_note(synth, octave_length + nC);
-    if (IsKeyReleased(kC_AZERTY))
-        if (layout == AZERTY)
-            release_note(synth, octave_length + nC);
-    if (IsKeyReleased(kC_SHARP_QWERTY))
-        if (layout == QWERTY)
-            release_note(synth, octave_length + nC_SHARP);
-    if (IsKeyReleased(kC_SHARP_AZERTY))
-        if (layout == AZERTY)
-            release_note(synth, octave_length + nC_SHARP);
+    if (IsKeyReleased(kC))
+        release_note(synth, octave_length + nC);
+    if (IsKeyReleased(kC_SHARP))
+        release_note(synth, octave_length + nC_SHARP);
     if (IsKeyReleased(kD))
         release_note(synth, octave_length + nD);
     if (IsKeyReleased(kD_SHARP))

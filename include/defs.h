@@ -25,10 +25,8 @@
 #define AZERTY 1
 
 /* Keyboard note keys */
-#define kC_QWERTY KEY_Q
-#define kC_AZERTY KEY_A
-#define kC_SHARP_QWERTY KEY_Z
-#define kC_SHARP_AZERTY KEY_W
+#define kC KEY_A
+#define kC_SHARP KEY_W
 #define kD KEY_S
 #define kD_SHARP KEY_E
 #define kE KEY_D

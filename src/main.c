@@ -15,8 +15,6 @@
 /* Prints the usage of the CLI arguments into the error output */
 void usage()
 {
-    fprintf(stderr, "synth -kb : keyboard input, defaults to QWERTY\n");
-    fprintf(stderr, "synth -kb <QWERTY/AZERTY>: keyboard input with the given keyboard layout\n");
     fprintf(stderr, "synth -midi <midi hardware id> : midi keyboard input, able to change parameters of the sounds (ADSR, cutoff, detune and oscillators waveforms)\n");
     fprintf(stderr, "use amidi -l to list your connected midi devices and find your midi device hardware id, often something like : hw:0,0,0 or hw:1,0,0\n");
     fprintf(stderr, "to see this helper again, use synth -h or synth -help\n");
@@ -25,31 +23,21 @@ void usage()
 /* Main function */
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-    {
-        usage();
-        return 1;
-    }
-
     char midi_device[256];
     int midi_input = 0;
-    int keyboard_input = 0;
-    int keyboard_layout = QWERTY;
 
-    if (strcmp(argv[1], "-kb") == 0 && argc == 2)
+    if (argc > 1)
     {
-        keyboard_input = 1;
-    }
-    else if (strcmp(argv[1], "-kb") == 0 && argc == 3)
-    {
-        if (strcmp(argv[2], "QWERTY") == 0)
+        if (strcmp(argv[1], "-midi") == 0 && argc >= 3)
         {
-            keyboard_input = 1;
+            midi_input = 1;
+            strncpy(midi_device, argv[2], sizeof(midi_device) - 1);
+            midi_device[sizeof(midi_device) - 1] = '\0';
         }
-        else if (strcmp(argv[2], "AZERTY") == 0)
+        else if (strcmp(argv[1], "-midi") == 0 && argc < 3)
         {
-            keyboard_input = 1;
-            keyboard_layout = AZERTY;
+            fprintf(stderr, "missing midi hardware device id. \n");
+            return 1;
         }
         else
         {
@@ -57,27 +45,7 @@ int main(int argc, char **argv)
             return 1;
         }
     }
-    else if (strcmp(argv[1], "-kb") == 0 && argc > 3)
-    {
-        usage();
-        return 1;
-    }
-    else if (strcmp(argv[1], "-midi") == 0 && argc >= 3)
-    {
-        midi_input = 1;
-        strncpy(midi_device, argv[2], sizeof(midi_device) - 1);
-        midi_device[sizeof(midi_device) - 1] = '\0';
-    }
-    else if (strcmp(argv[1], "-midi") == 0 && argc < 3)
-    {
-        fprintf(stderr, "missing midi hardware device id. \n");
-        return 1;
-    }
-    else
-    {
-        usage();
-        return 1;
-    }
+    
 
     int octave = DEFAULT_OCTAVE;
 
@@ -127,10 +95,10 @@ int main(int argc, char **argv)
             .detune = 0.0,
             .filter = &filter,
             .lfo = &lfo,
-            .arp = true,
+            .arp = false,
             .active_arp = 0,
             .active_arp_float = 1.0,
-            .bpm = 250.0};
+            .bpm = 150.0};
 
     if (synth.voices == NULL)
     {
@@ -241,12 +209,13 @@ int main(int argc, char **argv)
 
     while (!WindowShouldClose())
     {
-        if (keyboard_input && !saving_preset && !saving_audio_file)
+        if (!saving_preset && !saving_audio_file)
         {
-            handle_input(&synth, keyboard_layout, &octave);
-            handle_release(&synth, keyboard_input, octave);
+            handle_input(&synth, &octave);
+            handle_release(&synth, octave);
         }
-        else if (midi_input)
+
+        if (midi_input)
         {
             get_midi(midi_in, &synth, &attack, &decay, &sustain, &release);
         }
