@@ -38,6 +38,18 @@
 #define kA_SHARP KEY_U
 #define kB KEY_J
 
+/* Keyboard oscillator keys */
+#define KEY_OSC_A KEY_Z
+#define KEY_OSC_B KEY_X
+#define KEY_OSC_C KEY_C
+
+/* Keyboard ADSR envelope keys */
+#define KEY_ADSR KEY_LEFT_SHIFT
+#define KEY_ATT KEY_Z
+#define KEY_DEC KEY_X
+#define KEY_SUS KEY_C
+#define KEY_REL KEY_V
+
 /* MIDI packets informations */
 #define MIDI_MAX_VALUE 127.0
 #define PRESSED 0xF0

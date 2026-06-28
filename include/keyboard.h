@@ -8,7 +8,8 @@
  * Change the synth_t voices frequencies with the assigned note
  * Change the keyboard octave when UP or DOWN keys are being pressed
  */
-void handle_input(synth_t *synth, int *octave);
+void handle_input(synth_t *synth, int *octave, 
+	float *attack, float *decay, float *sustain, float *release);
 
 /* Free the synth voices when their assigned note key are being released */
 void handle_release(synth_t *synth, int octave);

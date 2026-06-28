@@ -9,7 +9,8 @@
  * Change the cutoff, detune and amplification when the assigned keys are being pressed
  * Change the keyboard octave when UP or DOWN keys are being pressed
  */
-void handle_input(synth_t *synth, int *octave)
+void handle_input(synth_t *synth, int *octave, 
+	float *attack, float *decay, float *sustain, float *release)
 {
     int octave_length = *octave * 12;
 
@@ -62,6 +63,35 @@ void handle_input(synth_t *synth, int *octave)
         }
             
     }
+    else if (IsKeyPressed(KEY_ADSR))
+    {
+			/* Changing ADSR envelope */
+			if (IsKeyPressed(KEY_ATT))
+			{
+				*attack += 0.1f;
+				printf("TEST !!!!\n");
+				if (*attack >= 1.0f)
+					*attack = 0.0f;
+			}
+			else if (IsKeyPressed(KEY_DEC))
+			{
+				*decay += 0.1f;
+				if (*decay >= 1.0f)
+					*decay = 0.0f;
+			}
+			else if (IsKeyPressed(KEY_SUS))
+			{
+				*sustain += 0.1f;
+				if (*sustain >= 1.0f)
+					*sustain = 0.0f;
+			}
+			else if (IsKeyPressed(KEY_REL))
+			{
+				*release += 0.1f;
+				if (*release >= 1.0f)
+					*release = 0.0f;
+			}
+	}
 }
 
 /* Free the synth voices when their assigned note key are being released */

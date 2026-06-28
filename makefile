@@ -17,7 +17,7 @@ DEPS = $(OBJS:.o=.d)
 
 # Flags
 CFLAGS = -Wall -Wextra -O2 -I$(INC_DIR) -I/usr/include/libxml2 -MMD -MP
-LDFLAGS = -lasound -lm -lraylib -lxml2 
+LDFLAGS = -lasound -lm -lraylib -lxml2 -lX11
 
 # Default
 all: $(BIN_DIR)/$(TARGET)

@@ -22,7 +22,6 @@ int get_midi(snd_rawmidi_t *midi_in, synth_t *synth,
         return 1;
     }
         
-
     for (int i = 0; i + 2 < ret; i += 3)
     {   /* Getting the MIDI bytes informations */
         unsigned char status = midi_buffer[i];

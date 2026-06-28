@@ -211,7 +211,7 @@ int main(int argc, char **argv)
     {
         if (!saving_preset && !saving_audio_file)
         {
-            handle_input(&synth, &octave);
+            handle_input(&synth, &octave, &attack, &decay, &sustain, &release);
             handle_release(&synth, octave);
         }
 
