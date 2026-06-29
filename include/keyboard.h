@@ -9,7 +9,8 @@
  * Change the keyboard octave when UP or DOWN keys are being pressed
  */
 void handle_input(synth_t *synth, int *octave, 
-	float *attack, float *decay, float *sustain, float *release);
+	float *attack, float *decay, float *sustain, float *release,
+	int *osc_a_wave, int *osc_b_wave, int *osc_c_wave);
 
 /* Free the synth voices when their assigned note key are being released */
 void handle_release(synth_t *synth, int octave);

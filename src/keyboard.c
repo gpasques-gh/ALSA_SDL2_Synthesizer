@@ -10,7 +10,8 @@
  * Change the keyboard octave when UP or DOWN keys are being pressed
  */
 void handle_input(synth_t *synth, int *octave, 
-	float *attack, float *decay, float *sustain, float *release)
+	float *attack, float *decay, float *sustain, float *release,
+	int *osc_a_wave, int *osc_b_wave, int *osc_c_wave)
 {
     int octave_length = *octave * 12;
 
@@ -63,20 +64,17 @@ void handle_input(synth_t *synth, int *octave,
         }
             
     }
-    else if (IsKeyPressed(KEY_ADSR))
-    {
-			/* Changing ADSR envelope */
-			if (IsKeyPressed(KEY_ATT))
+    else if (IsKeyDown(KEY_ADSR)) {
+		if (IsKeyPressed(KEY_ATT))
 			{
 				*attack += 0.1f;
-				printf("TEST !!!!\n");
-				if (*attack >= 1.0f)
+				if (*attack >= 2.0f)
 					*attack = 0.0f;
 			}
 			else if (IsKeyPressed(KEY_DEC))
 			{
 				*decay += 0.1f;
-				if (*decay >= 1.0f)
+				if (*decay >= 2.0f)
 					*decay = 0.0f;
 			}
 			else if (IsKeyPressed(KEY_SUS))
@@ -92,6 +90,23 @@ void handle_input(synth_t *synth, int *octave,
 					*release = 0.0f;
 			}
 	}
+			
+	else if (IsKeyPressed(KEY_OSC_A))
+	{
+		(*osc_a_wave)++;
+		*osc_a_wave %= 4;
+	}
+	else if (IsKeyPressed(KEY_OSC_B))
+	{
+		(*osc_b_wave)++;
+		*osc_b_wave %= 4;
+	}	
+	else if (IsKeyPressed(KEY_OSC_C))
+	{
+		(*osc_c_wave)++;
+		*osc_c_wave %= 4;
+	}
+		
 }
 
 /* Free the synth voices when their assigned note key are being released */
